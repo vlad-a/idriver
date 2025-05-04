@@ -2525,6 +2525,7 @@ p a {
 	.details-item:nth-child(5n) {
 		border-right: 1px solid var(--color-gray-light);
 	}
+	
 	.popup-basket .popup__content {
 		width: 950px;
 	}
@@ -2539,6 +2540,7 @@ p a {
 	.fault-left-text__title {
 		font-size: 22px;
 	}
+	
 }
 @media screen and (max-width: 1024px) {
     .popular-list {
@@ -2609,12 +2611,6 @@ p a {
 	.details-list {
         grid-template-columns: repeat(3, 1fr);
     }
-	.details-item:nth-child(3n) {
-		border-right: 0;
-	}
-	.details-item:nth-child(4n) {
-		border-right: 1px solid var(--color-gray-light);
-	}
 	.details-list {
 		margin-bottom: 70px;
 	}
@@ -2696,6 +2692,20 @@ p a {
 	.fault-left {
 		flex-direction: column;
 		gap: 10px;
+	}
+	.details-item:nth-child(3n+2) {
+		border-right: 1px solid #ccc;
+	}
+	
+	/* Отключить линию справа у 3-го, 6-го, 9-го и т.д. */
+	.details-item:nth-child(3n+1),
+	.details-item:nth-child(3n+2) {
+		border-right: 1px solid var(--color-gray-light)
+	}
+
+	/* Отключить линию справа у 3-го, 6-го, 9-го и т.д. */
+	.details-item:nth-child(3n) {
+		border-right: none;
 	}
 }
 @media screen and (max-width: 830px) {
