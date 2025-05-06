@@ -1,21 +1,25 @@
 $(document).ready(function () {
 	// JQEURY CODE
-    new Swiper('.preview-slider', {
-		slidesPerView: 1,       // Один слайд на экране
-		slidesPerGroup: 1,      // Прокручивается по одному
-		loop: true,             // Зацикленность
-		spaceBetween: 0,        // Без отступа
-  
-		pagination: {
-		  el: '.swiper-pagination',
-		  clickable: true,
-		},
-  
-		navigation: {
-		  nextEl: '.swiper-button-next',
-		  prevEl: '.swiper-button-prev',
-		},
-	  });
+    if (typeof Swiper !== 'undefined') {
+        new Swiper('.preview-slider', {
+            slidesPerView: 1,       // Один слайд на экране
+            slidesPerGroup: 1,      // Прокручивается по одному
+            loop: true,             // Зацикленность
+            spaceBetween: 0,        // Без отступа
+      
+            pagination: {
+              el: '.swiper-pagination',
+              clickable: true,
+            },
+      
+            navigation: {
+              nextEl: '.swiper-button-next',
+              prevEl: '.swiper-button-prev',
+            },
+        });
+    } else {
+        console.log('Swiper library is not loaded. Swiper initialization skipped.');
+    }
 
 	// AUTHENTICATION TABS
 
