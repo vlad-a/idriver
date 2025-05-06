@@ -1,25 +1,21 @@
 $(document).ready(function () {
 	// JQEURY CODE
-    if (typeof Swiper !== 'undefined') {
-        new Swiper('.preview-slider', {
-            slidesPerView: 1,       // Один слайд на экране
-            slidesPerGroup: 1,      // Прокручивается по одному
-            loop: true,             // Зацикленность
-            spaceBetween: 0,        // Без отступа
-      
-            pagination: {
-              el: '.swiper-pagination',
-              clickable: true,
-            },
-      
-            navigation: {
-              nextEl: '.swiper-button-next',
-              prevEl: '.swiper-button-prev',
-            },
-        });
-    } else {
-        console.warn('Swiper library is not loaded. Slider functionality will not work.');
-    }
+    new Swiper('.preview-slider', {
+		slidesPerView: 1,       // Один слайд на экране
+		slidesPerGroup: 1,      // Прокручивается по одному
+		loop: true,             // Зацикленность
+		spaceBetween: 0,        // Без отступа
+  
+		pagination: {
+		  el: '.swiper-pagination',
+		  clickable: true,
+		},
+  
+		navigation: {
+		  nextEl: '.swiper-button-next',
+		  prevEl: '.swiper-button-prev',
+		},
+	  });
 
 	// AUTHENTICATION TABS
 
@@ -437,4 +433,348 @@ function setupLazyLoad() {
 	  }
 	});
 	
+// Объявляем общие элементы и функцию
+// Объявляем общие элементы и функцию
+const trigger = document.getElementById('personal-information-change');
+const inputBlock = document.querySelectorAll('.personal-info-item__change');
+const staticBlocks = document.querySelectorAll('.personal-info-item__static');
+const buttonsBlocks = document.querySelectorAll('.profile-personal-btns');
+const cancelBtn = document.querySelector('.profile-personal-btns .btn--transparent');
+const saveBtn = document.querySelector('.profile-personal-btns .btn--blue');
+
+// Функция переключения режима редактирования
+function toggleEditMode() {
+  inputBlock.forEach(block => block.classList.toggle('active'));
+  staticBlocks.forEach(block => block.classList.toggle('active'));
+  buttonsBlocks.forEach(block => block.classList.toggle('active'));
+}
+
+// Вешаем обработчики
+if (trigger) {
+  trigger.addEventListener('click', toggleEditMode);
+}
+
+if (cancelBtn && saveBtn) {
+  // Обработчик для кнопки "Отмена"
+  cancelBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    toggleEditMode();
+  });
+
+  // Обработчик для кнопки "Сохранить"
+  saveBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    // Здесь должна быть логика сохранения данных
+    toggleEditMode();
+  });
+}
+// Кастомный селект (исправленная версия)
+document.querySelectorAll('.custom-select').forEach(select => {
+	const triggerSelect = select.querySelector('.custom-select__trigger');
+	const options = select.querySelectorAll('.custom-select__option');
+	const textMain = select.querySelector('.custom-select__text-main');
+  
+	if (triggerSelect) {
+	  triggerSelect.addEventListener('click', function () {
+		select.classList.toggle('open');
+	  });
+	}
+  
+	options.forEach(option => {
+	  option.addEventListener('click', function () {
+		if (textMain) {
+		  textMain.textContent = this.textContent;
+		}
+		select.classList.remove('open');
+	  });
+	});
+  
+	document.addEventListener('click', function (e) {
+	  if (!select.contains(e.target)) {
+		select.classList.remove('open');
+	  }
+	});
+});
+  
+
+  // Находим все элементы-триггеры
+  const closeTriggers = document.querySelectorAll(
+    '.profile-aside__back, .profile-aside__hide, .profile-aside-item'
+  );
+  const openTrigger = document.querySelector('.profile-mobile__open');
+  const profileAside = document.querySelector('.profile-aside');
+  const profileAsideBack = document.querySelector('.profile-aside__back');
+  const profileAsideItems = document.querySelectorAll('.profile-aside-item');
+  const profileMobileText = document.querySelector('.profile-mobile__text');
+
+  const openSidebar = () => {
+    profileAside.classList.add('active');
+    if (profileAsideBack) profileAsideBack.classList.add('active');
+  };
+
+  const closeSidebar = () => {
+    profileAside.classList.remove('active');
+    if (profileAsideBack) profileAsideBack.classList.remove('active');
+  };
+
+  const handleClick = (event) => {
+    const trigger = event.currentTarget;
+    closeSidebar();
+
+    if (trigger.classList.contains('profile-aside-item')) {
+      profileAsideItems.forEach(item => item.classList.remove('active'));
+      trigger.classList.add('active');
+
+      // Копирование текста
+      if (profileMobileText) {
+        const textElement = trigger.querySelector('.profile-aside-item__text');
+        if (textElement) {
+          profileMobileText.textContent = textElement.textContent.trim();
+        }
+      }
+    }
+  };
+
+  if (profileAside) {
+    closeTriggers.forEach(trigger => {
+      trigger.addEventListener('click', handleClick);
+    });
+    
+    if (openTrigger) {
+      openTrigger.addEventListener('click', openSidebar);
+    }
+  }
+}
+
+// Script for profile order details toggle
+$(document).ready(function() {
+	// Initially hide the order details section
+	$('.profile-order-details').addClass('hidden');
+
+	// When a .profile-order__details is clicked
+	$(document).on('click', '.profile-order__details', function() {
+		const $orderList = $(this).closest('.profile-order__content').find('.profile-order-list');
+		const $orderDetails = $(this).closest('.profile-order__content').find('.profile-order-details');
+
+		$orderList.css('opacity', 0);
+		setTimeout(function() {
+			$orderList.addClass('hidden');
+			$orderDetails.removeClass('hidden');
+			setTimeout(function() {
+				$orderDetails.css('opacity', 1);
+			}, 50); // Short delay to ensure display:block is applied before opacity transition
+		}, 500); // Match CSS transition duration
+	});
+
+	// When a .prodile-order-details__back is clicked
+	$(document).on('click', '.prodile-order-details__back', function() {
+		const $orderList = $(this).closest('.profile-order__content').find('.profile-order-list');
+		const $orderDetails = $(this).closest('.profile-order__content').find('.profile-order-details');
+
+		$orderDetails.css('opacity', 0);
+		setTimeout(function() {
+			$orderDetails.addClass('hidden');
+			$orderList.removeClass('hidden');
+			setTimeout(function() {
+				$orderList.css('opacity', 1);
+			}, 50); // Short delay
+		}, 500); // Match CSS transition duration
+	});
+});
+
+// Accordion for profile order details dropdown
+document.querySelectorAll('.profile-order-details-dropdown__show').forEach(showElement => {
+	showElement.addEventListener('click', function() {
+		const dropdown = this.closest('.profile-order-details-dropdown');
+		const content = dropdown.querySelector('.profile-order-details-dropdown-content');
+		const showTextElement = this.querySelector('.profile-order-details-dropdown__show--text');
+
+		if (dropdown.classList.contains('open')) {
+			// Close the dropdown
+			content.style.maxHeight = '0';
+			dropdown.classList.remove('open');
+			if (showTextElement) {
+				showTextElement.textContent = 'Показать';
+			}
+		} else {
+			// Open the dropdown
+			content.style.maxHeight = content.scrollHeight + 'px';
+			dropdown.classList.add('open');
+			if (showTextElement) {
+				showTextElement.textContent = 'Скрыть';
+			}
+		}
+	});
+});
+
+// Profile Page Tabs
+const profileTabs = document.querySelectorAll('.profile-aside-item');
+const profileContents = document.querySelectorAll('.profile-content .profile-content-tab');
+
+profileTabs.forEach((tab, index) => {
+    tab.addEventListener('click', () => {
+        // Deactivate all tabs
+        profileTabs.forEach(t => t.classList.remove('active'));
+        
+        // Deactivate all content panes by removing the 'active' class.
+        // CSS (.profile-content-tab and .profile-content-tab.active)
+        // will handle making them display:none and opacity:0 with transition.
+        profileContents.forEach(c => {
+            c.classList.remove('active');
+        });
+
+        // Activate the clicked tab
+        tab.classList.add('active');
+
+        // Activate the corresponding content pane.
+        // CSS's .active class will make it display:block and opacity:1 (with transition).
+        const newActiveContent = profileContents[index];
+        if (newActiveContent) {
+            // A minimal timeout can help ensure that class removals are processed
+            // before class additions, aiding smooth transitions when display properties change.
+            setTimeout(() => {
+                newActiveContent.classList.add('active');
+            }, 0); 
+        }
+    });
+});
+
+// Initially activate the first tab and content if they exist
+if (profileTabs.length > 0 && profileContents.length > 0) {
+    profileTabs[0].classList.add('active');
+    profileContents[0].classList.add('active'); // CSS .active class handles display and opacity
+}
+
+// My Garage VIN input field interaction
+document.querySelectorAll('.my-garage-correct').forEach(correctSection => {
+    const inputWrappers = correctSection.querySelectorAll('.my-garage-correct--field .my-garage-correct-item.d-flex');
+    const buttonsContainer = correctSection.querySelector('.profile-personal-btns');
+    const cancelBtn = buttonsContainer?.querySelector('.btn--transparent');
+    const saveBtn = buttonsContainer?.querySelector('.btn--blue');
+
+    const deactivateSection = () => {
+        inputWrappers.forEach(wrapper => wrapper.classList.remove('active'));
+        correctSection.classList.remove('editing');
+        const focusedInput = correctSection.querySelector('input:focus');
+        if (focusedInput) {
+            focusedInput.blur();
+        }
+    };
+
+    inputWrappers.forEach(inputWrapper => {
+        const input = inputWrapper.querySelector('input[type="text"]');
+        const correctIcon = inputWrapper.querySelector('.my-garage-correct-item__to-correct');
+        const closeIcon = inputWrapper.querySelector('.my-garage-correct-item__to-close');
+
+        if (input) {
+            const activateEditState = () => {
+                // Deactivate other items in the same section first if needed, or allow multiple active
+                // For now, let's assume only one item is truly "active" for editing icons, but section remains editing.
+                inputWrappers.forEach(iw => {
+                    if (iw !== inputWrapper) iw.classList.remove('active'); 
+                });
+                inputWrapper.classList.add('active');
+                correctSection.classList.add('editing');
+            };
+
+            input.addEventListener('focus', activateEditState);
+
+            input.addEventListener('blur', (event) => {
+                const relatedTarget = event.relatedTarget;
+                setTimeout(() => {
+                    if (!correctSection.contains(relatedTarget) && !inputWrapper.contains(relatedTarget)) {
+                        inputWrapper.classList.remove('active');
+                        const anyOtherActive = Array.from(inputWrappers).some(iw => iw.classList.contains('active'));
+                        if (!anyOtherActive) {
+                            correctSection.classList.remove('editing');
+                        }
+                    }
+                }, 0);
+            });
+
+            inputWrapper.addEventListener('click', (e) => {
+                if (e.target === inputWrapper || (correctIcon && correctIcon.contains(e.target))) {
+                    input.focus();
+                }
+            });
+
+            if (closeIcon) {
+                closeIcon.addEventListener('mousedown', (e) => {
+                    e.preventDefault(); // Prevent default focus shifts
+                    inputWrapper.classList.remove('active');
+                    if (input) {
+                        input.value = ''; // Clear the input value
+                        input.blur();   // Explicitly remove focus from the input
+                    }
+                    
+                    // Use setTimeout to allow blur event to potentially process first if needed,
+                    // and then check if the section should stop editing.
+                    setTimeout(() => {
+                         // Check if any other input wrappers in this section are still active.
+                         const anyOtherStillActive = Array.from(inputWrappers).some(iw => 
+                            iw !== inputWrapper && iw.classList.contains('active')
+                        );
+                        // If no other items are active, remove the editing class from the section
+                        if (!anyOtherStillActive) {
+                            correctSection.classList.remove('editing');
+                        }
+                    }, 0); // Timeout 0 allows blur/other events to potentially clear first
+                });
+            }
+        }
+    });
+
+    if (cancelBtn) {
+        cancelBtn.addEventListener('click', deactivateSection);
+    }
+    if (saveBtn) {
+        saveBtn.addEventListener('click', () => {
+            // Add save logic here if needed
+            deactivateSection();
+        });
+    }
+});
+
+// My Garage Tabs ("Мои авто" / "Архив")
+const myGarageTabs = document.querySelectorAll('.my-garage-tabs .my-garage-tab');
+const myGarageContents = document.querySelectorAll('.my-garage-content-tabs .my-garage-content');
+
+myGarageTabs.forEach((tab, index) => {
+    tab.addEventListener('click', () => {
+        // Deactivate all tabs and content panes
+        myGarageTabs.forEach(t => t.classList.remove('active'));
+        myGarageContents.forEach(c => c.classList.remove('active'));
+
+        // Activate the clicked tab
+        tab.classList.add('active');
+
+        // Activate the corresponding content pane
+        const activeContent = myGarageContents[index];
+        if (activeContent) {
+            // Use a minimal timeout to help with CSS transitions on display change
+            setTimeout(() => {
+                 activeContent.classList.add('active');
+            }, 0); 
+        }
+    });
+});
+
+// Initially ensure the first tab and content are active
+if (myGarageTabs.length > 0 && myGarageContents.length > 0) {
+    if (!document.querySelector('.my-garage-tabs .my-garage-tab.active')) {
+        myGarageTabs[0].classList.add('active'); // Activate first tab if none are active
+    }
+    // Ensure the content corresponding to the initially active tab is shown
+    const initiallyActiveTabIndex = Array.from(myGarageTabs).findIndex(tab => tab.classList.contains('active'));
+    if (initiallyActiveTabIndex !== -1 && myGarageContents[initiallyActiveTabIndex]) {
+        myGarageContents.forEach((content, index) => {
+            if (index === initiallyActiveTabIndex) {
+                 content.classList.add('active');
+            } else {
+                content.classList.remove('active');
+            }
+        });
+    } else if (myGarageContents[0]){
+         myGarageContents[0].classList.add('active'); // Default to showing first content if active tab logic fails
+    }
 }
