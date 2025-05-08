@@ -27,6 +27,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (index > 2) {
                 tab.style.display = 'none';
             }
+            // Store original text for resetting
+            const pickTopTextElement = tab.querySelector('.pick-top__text');
+            if (pickTopTextElement) {
+                tab.dataset.originalText = pickTopTextElement.textContent.trim();
+            }
         });
         
         // Initially show first tab content
@@ -120,6 +125,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Find which tab is active
                 const activeIndex = currentActiveTabIndex;
                 
+                // Update the corresponding pick-top__text
+                if (tabItems[activeIndex]) {
+                    const pickTopTextElement = tabItems[activeIndex].querySelector('.pick-top__text');
+                    if (pickTopTextElement) {
+                        pickTopTextElement.textContent = cellText;
+                    }
+                }
+                
                 // Store the selected item based on the active tab
                 switch(activeIndex) {
                     case 0: selectedItems.brand = cellText; break;
@@ -149,10 +162,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 // If we're changing a selection in the current tab, reset all tabs after this one
                 const parentTabContent = cell.closest('.pick-tab-content-item');
                 if (parentTabContent && currentActiveTabIndex === Array.from(tabContentItems).indexOf(parentTabContent)) {
-                    // Hide all tabs after the current one
+                    // Hide all tabs after the current one and reset their text
                     for (let i = activeIndex + 1; i < tabItems.length; i++) {
-                        if (i > 2) { // Keep the first 3 tabs always visible
+                        if (i > 2) { // Keep the first 3 tabs always visible (or adjust as needed)
                             tabItems[i].style.display = 'none';
+                        }
+                        // Reset the text of the tab's pick-top__text
+                        const pickTopTextToReset = tabItems[i].querySelector('.pick-top__text');
+                        if (pickTopTextToReset && tabItems[i].dataset.originalText) {
+                            pickTopTextToReset.textContent = tabItems[i].dataset.originalText;
                         }
                     }
                     

@@ -1363,5 +1363,32 @@ $(document).ready(function () {
             rememberVinCheckbox.trigger('change');
         }
     });
+
+    // Setup counter functionality for basket items
+    const counterComponents = document.querySelectorAll('.popup-basket-item-counter');
+    
+    counterComponents.forEach(counter => {
+        const minusButton = counter.querySelector('.popup-basket-item-counter__minus');
+        const plusButton = counter.querySelector('.popup-basket-item-counter__plus');
+        const counterDisplay = counter.querySelector('.popup-basket-item-counter__counter');
+        
+        if (minusButton && plusButton && counterDisplay) {
+            // Minus button click handler
+            minusButton.addEventListener('click', () => {
+                let count = parseInt(counterDisplay.textContent);
+                if (count > 1) {
+                    count--;
+                    counterDisplay.textContent = count;
+                }
+            });
+            
+            // Plus button click handler
+            plusButton.addEventListener('click', () => {
+                let count = parseInt(counterDisplay.textContent);
+                count++;
+                counterDisplay.textContent = count;
+            });
+        }
+    });
 });
 
