@@ -4955,6 +4955,9 @@ p.profile-order-dropdown__text-small {
 	.basket .basket__text {
 		display: none;
 	}
+	.order-get-method-line__item input {
+		width: 100%;
+	}
 	.garage-window-add {
 		flex-direction: column;
 		gap: 15px;
