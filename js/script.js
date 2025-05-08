@@ -1390,5 +1390,33 @@ $(document).ready(function () {
             });
         }
     });
+
+    // Set focus on delivery form input when dropdown is shown
+    const deliveryForms = document.querySelectorAll('.order-form-delivery');
+    
+    deliveryForms.forEach(form => {
+        const showButton = form.querySelector('.order-form-delivery__show');
+        const defaultArea = form.querySelector('.order-form-delivery__default');
+        const dropdown = form.querySelector('.order-form-delivery-list');
+        const inputField = form.querySelector('.order-form-delivery-list__top input');
+        
+        if (showButton && dropdown && inputField) {
+            // Function to check visibility and set focus
+            const setFocusIfVisible = () => {
+                setTimeout(() => {
+                    if (window.getComputedStyle(dropdown).display !== 'none') {
+                        inputField.focus();
+                    }
+                }, 10);
+            };
+            
+            // Add event listeners
+            showButton.addEventListener('click', setFocusIfVisible);
+            
+            if (defaultArea) {
+                defaultArea.addEventListener('click', setFocusIfVisible);
+            }
+        }
+    });
 });
 
