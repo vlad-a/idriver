@@ -3228,6 +3228,8 @@ transition: .3s all;
     left: 0;
     width: 100%;
 	z-index: 1;
+	max-height: 350px;
+	overflow: auto;
 }
 .order-form-delivery-list__all {
 	color: #000000;
