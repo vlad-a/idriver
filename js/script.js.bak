@@ -1,4 +1,11 @@
 $(document).ready(function () {
+    // Direct handler for delivery item selection that will work regardless of other code
+    $(document).on('click', '.order-form-delivery-list-item', function() {
+        var selectedText = $(this).find('.order-form-delivery-list-item__text').text().trim();
+        var deliveryForm = $(this).closest('.order-form-delivery');
+        deliveryForm.find('.order-form-delivery__text').text(selectedText);
+    });
+
     // Removing automatic mobile menu activation
     // Now the mobile menu will only be shown when clicked
 
@@ -1167,6 +1174,7 @@ $(document).ready(function () {
 
     // Order Form Delivery Interaction - Updated for multiple instances
     const allDeliveryContainers = document.querySelectorAll('.order-form-delivery');
+
     allDeliveryContainers.forEach(deliveryContainer => {
         // Select elements *within* the current deliveryContainer
         const deliveryDefault = deliveryContainer.querySelector('.order-form-delivery__default');
@@ -1276,6 +1284,24 @@ $(document).ready(function () {
     });
     // Note: Removed the previous single-instance outside click/blur listeners 
     // as they are now handled within the loop or the new global listener.
+
+    // Direct jQuery handler for delivery list items
+    $('.order-form-delivery-list-item').on('click', function() {
+        // Get the text content
+        var itemText = $(this).find('.order-form-delivery-list-item__text').text().trim();
+        
+        // Find the parent delivery form
+        var $deliveryForm = $(this).closest('.order-form-delivery');
+        
+        // Update the text display
+        $deliveryForm.find('.order-form-delivery__text').text(itemText);
+        
+        // Hide dropdown, show default view
+        $deliveryForm.find('.order-form-delivery-list').hide();
+        $deliveryForm.find('.order-form-delivery__default').css('display', 'flex');
+        $deliveryForm.find('.order-form-delivery-list__dropdown').hide();
+        $deliveryForm.find('.order-form-delivery-list__top input').val('');
+    });
 
     // Delivery Method Radio Button Logic
     const deliveryMethodItems = document.querySelectorAll('.order-get-method-item');
@@ -1389,4 +1415,88 @@ $(document).ready(function () {
             });
         }
     });
+
+    // Set focus on delivery form input when dropdown is shown
+    const deliveryForms = document.querySelectorAll('.order-form-delivery');
+    
+    deliveryForms.forEach(form => {
+        const showButton = form.querySelector('.order-form-delivery__show');
+        const defaultArea = form.querySelector('.order-form-delivery__default');
+        const dropdown = form.querySelector('.order-form-delivery-list');
+        const inputField = form.querySelector('.order-form-delivery-list__top input');
+        
+        if (showButton && dropdown && inputField) {
+            // Function to check visibility and set focus
+            const setFocusIfVisible = () => {
+                setTimeout(() => {
+                    if (window.getComputedStyle(dropdown).display !== 'none') {
+                        inputField.focus();
+                    }
+                }, 10);
+            };
+            
+            // Add event listeners
+            showButton.addEventListener('click', setFocusIfVisible);
+            
+            if (defaultArea) {
+                defaultArea.addEventListener('click', setFocusIfVisible);
+            }
+        }
+    });
+
+    // Update delivery text when an item is selected
+    document.querySelectorAll('.order-form-delivery').forEach(form => {
+        const deliveryItems = form.querySelectorAll('.order-form-delivery-list-item');
+        const textDisplay = form.querySelector('.order-form-delivery__text');
+        
+        if (deliveryItems.length && textDisplay) {
+            deliveryItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const itemText = item.querySelector('.order-form-delivery-list-item__text');
+                    if (itemText) {
+                        // Update the display text with the selected option's text
+                        textDisplay.textContent = itemText.textContent.trim();
+                        
+                        // Hide the dropdown if needed
+                        const dropdown = form.querySelector('.order-form-delivery-list');
+                        if (dropdown) {
+                            dropdown.style.display = 'none';
+                        }
+                    }
+                });
+            });
+        }
+    });
+
+    // Update order-form-delivery__text with selected delivery location text
+    document.querySelectorAll('.order-form-delivery-list-item').forEach(item => {
+        item.addEventListener('click', function() {
+            const itemText = this.querySelector('.order-form-delivery-list-item__text').textContent.trim();
+            const deliveryForm = this.closest('.order-form-delivery');
+            const textDisplay = deliveryForm.querySelector('.order-form-delivery__text');
+            
+            if (itemText && textDisplay) {
+                // Update the display text with this specific item's text
+                textDisplay.textContent = itemText;
+                
+                // Hide the dropdown
+                const deliveryList = deliveryForm.querySelector('.order-form-delivery-list');
+                const deliveryDefault = deliveryForm.querySelector('.order-form-delivery__default');
+                
+                if (deliveryList && deliveryDefault) {
+                    deliveryList.style.display = 'none';
+                    deliveryDefault.style.display = 'flex';
+                }
+                
+                // Clear the search input if exists
+                const searchInput = deliveryForm.querySelector('.order-form-delivery-list__top input');
+                if (searchInput) {
+                    searchInput.value = '';
+                }
+            }
+        });
+    });
+
+
 });
+

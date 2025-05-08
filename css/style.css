@@ -766,8 +766,7 @@ main {
 }
 
 .pick-tabs-top {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+	display: flex;
     border-bottom: 3px solid var(--color-blue-light);
 }
 .pick-tabs-top__item {
@@ -779,7 +778,7 @@ main {
     color: var(--color-gray);
     gap: 8px;
     border-right: 1px solid #eaebee;
-    padding: 25px 0;
+    padding: 25px 65px;
     font-size: 16px;
     line-height: 20px;
     cursor: pointer;
