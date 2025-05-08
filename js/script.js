@@ -1,15 +1,6 @@
 $(document).ready(function () {
-    // Инициализируем мобильное меню как активное сразу при загрузке для экранов меньше 830px
-    if (window.innerWidth < 830) {
-        const mobileMenu = document.querySelector(".mobile-menu");
-        const catalogBtn = document.querySelector(".catalog-btn");
-        if (mobileMenu) {
-            mobileMenu.classList.add("active");
-        }
-        if (catalogBtn) {
-            catalogBtn.classList.add("active");
-        }
-    }
+    // Removing automatic mobile menu activation
+    // Now the mobile menu will only be shown when clicked
 
     // Удаляем конфликтующий jQuery обработчик:
     $(".catalog-btn").on("click", function () {
@@ -106,52 +97,6 @@ $(document).ready(function () {
             });
         });
     });
-
-    // TABS FOR PICK
-    const tabs = document.querySelectorAll(".pick-tabs-top__item");
-    const tabItems = document.querySelectorAll(".pick-tab-content-item");
-
-    // Определим текущую ширину экрана один раз при загрузке
-    const isDesktop = window.innerWidth > 1024;
-
-    tabs.forEach((tab, index) => {
-        tab.addEventListener("click", function () {
-            if (isDesktop) {
-                // Удаляем active у всех табов
-                tabs.forEach((t) => t.classList.remove("active"));
-                tab.classList.add("active");
-
-                // Показываем соответствующий контент
-                tabItems.forEach((item) => {
-                    item.style.display = "none";
-                    item.style.opacity = 0;
-                });
-
-                const target = tabItems[index];
-                target.style.display = "grid";
-
-                setTimeout(() => {
-                    target.style.opacity = 1;
-                    target.style.transition = "opacity 0.3s ease";
-                }, 10);
-            } else {
-                // На мобильных — просто переключаем active (toggle)
-                if (tab.classList.contains("active")) {
-                    tab.classList.remove("active");
-                } else {
-                    tabs.forEach((t) => t.classList.remove("active"));
-                    tab.classList.add("active");
-                }
-            }
-        });
-    });
-
-    // При загрузке: активируем первый таб и контент, только если десктоп
-    if (isDesktop && tabs[0] && tabItems[0]) {
-        tabs[0].classList.add("active");
-        tabItems[0].style.display = "grid";
-        tabItems[0].style.opacity = 1;
-    }
 
     // TABS FOR ALPHABET
     const tabsAlphabet = document.querySelectorAll(
@@ -959,8 +904,6 @@ $(document).ready(function () {
         if (!backButton && catalogBox) {
             backButton = document.createElement("div");
             backButton.classList.add("mobile-catalog-back");
-            backButton.style.cssText =
-                "padding: 10px 15px; cursor: pointer; border-bottom: 1px solid var(--color-gray-light); display: flex; align-items: center; gap: 5px;";
             catalogBox.insertBefore(backButton, catalogBox.firstChild);
         }
 
@@ -1087,7 +1030,7 @@ $(document).ready(function () {
                         box.style.display = "block";
                         box.querySelector(
                             ".catalog-content-item__title"
-                        ).style.display = "block";
+                        ).style.display = "flex";
                         box.querySelectorAll(
                             ".catalog-content-item__link"
                         ).forEach((link) => (link.style.display = "none"));
@@ -1100,7 +1043,7 @@ $(document).ready(function () {
                 ).style.display = "none";
                 activeTitleBox
                     .querySelectorAll(".catalog-content-item__link")
-                    .forEach((link) => (link.style.display = "block"));
+                    .forEach((link) => (link.style.display = "flex"));
             }
         }
 
@@ -1177,6 +1120,9 @@ $(document).ready(function () {
         showLevel(1); // Default to level 1 for simplicity on re-init / resize scenarios
     }
 
+    // Call setupMobileCatalogNavigation immediately to ensure it runs on page load
+    setupMobileCatalogNavigation();
+    
     window.addEventListener("load", setupMobileCatalogNavigation);
     window.addEventListener("resize", setupMobileCatalogNavigation);
     // Mobile Menu Toggle
@@ -1219,66 +1165,118 @@ $(document).ready(function () {
         });
     }
 
-    // Order Form Delivery Interaction
-    const deliveryContainer = document.querySelector('.order-form-delivery');
-    if (deliveryContainer) {
+    // Order Form Delivery Interaction - Updated for multiple instances
+    const allDeliveryContainers = document.querySelectorAll('.order-form-delivery');
+
+    allDeliveryContainers.forEach(deliveryContainer => {
+        // Select elements *within* the current deliveryContainer
         const deliveryDefault = deliveryContainer.querySelector('.order-form-delivery__default');
+        const deliveryDefaultText = deliveryDefault?.querySelector('.order-form-delivery__text'); // Use optional chaining
         const deliveryList = deliveryContainer.querySelector('.order-form-delivery-list');
-        const deliveryListInput = deliveryList.querySelector('.order-form-delivery-list__top input');
-        const deliveryListDropdown = deliveryList.querySelector('.order-form-delivery-list__dropdown');
+        const deliveryListInput = deliveryList?.querySelector('.order-form-delivery-list__top input');
+        const deliveryListDropdown = deliveryList?.querySelector('.order-form-delivery-list__dropdown');
+        const deliveryListItems = deliveryListDropdown?.querySelectorAll('.order-form-delivery-list-item');
+
+        // Check if all necessary elements exist for this instance
+        if (!deliveryDefault || !deliveryDefaultText || !deliveryList || !deliveryListInput || !deliveryListDropdown || !deliveryListItems) {
+            // console.warn('Skipping delivery interaction setup for one instance due to missing elements.');
+            return; // Skip this container if essential elements are missing
+        }
+
+        // --- Set up listeners for this specific instance ---
 
         // Initial states
-        if (deliveryDefault) deliveryDefault.style.display = 'flex';
-        if (deliveryList) deliveryList.style.display = 'none';
-        if (deliveryListDropdown) deliveryListDropdown.style.display = 'none';
+        deliveryDefault.style.display = 'flex';
+        deliveryList.style.display = 'none';
+        deliveryListDropdown.style.display = 'none';
 
-        if (deliveryDefault && deliveryList && deliveryListInput) {
-            deliveryDefault.addEventListener('click', () => {
-                deliveryDefault.style.display = 'none';
-                deliveryList.style.display = 'block'; // Or appropriate display type
-                deliveryListInput.focus();
-                if (deliveryListDropdown) deliveryListDropdown.style.display = 'none'; // Ensure dropdown is hidden
-            });
-        }
-
-        if (deliveryListInput && deliveryListDropdown) {
-            deliveryListInput.addEventListener('input', () => {
-                if (deliveryListInput.value.trim().length > 0) {
-                    deliveryListDropdown.style.display = 'block'; // Or appropriate display type
-                } else {
-                    deliveryListDropdown.style.display = 'none';
+        // Listener for clicking the default view
+        deliveryDefault.addEventListener('click', () => {
+            // Hide other open delivery lists before showing this one (optional, but good UX)
+            allDeliveryContainers.forEach(otherContainer => {
+                if (otherContainer !== deliveryContainer) {
+                    const otherList = otherContainer.querySelector('.order-form-delivery-list');
+                    const otherDefault = otherContainer.querySelector('.order-form-delivery__default');
+                    const otherDropdown = otherContainer.querySelector('.order-form-delivery-list__dropdown');
+                    const otherInput = otherContainer.querySelector('.order-form-delivery-list__top input');
+                    if(otherList) otherList.style.display = 'none';
+                    if(otherDefault) otherDefault.style.display = 'flex';
+                    if(otherDropdown) otherDropdown.style.display = 'none';
+                    if(otherInput) otherInput.value = '';
                 }
             });
-        }
+            
+            // Show this instance's list and dropdown
+            deliveryDefault.style.display = 'none';
+            deliveryList.style.display = 'block';
+            deliveryListDropdown.style.display = 'block';
+        });
 
-        if (deliveryList && deliveryDefault && deliveryListInput && deliveryListDropdown) {
-            // Use a document-level click listener to handle "blur" more effectively
-            document.addEventListener('click', function(event) {
-                // Check if the deliveryList is visible and the click is outside the deliveryContainer
-                if (deliveryList.style.display !== 'none' && !deliveryContainer.contains(event.target)) {
+        // Listener for input changes (for filtering, if implemented later)
+        deliveryListInput.addEventListener('input', () => {
+            // This currently hides/shows based on input value. 
+            // You might want to add actual filtering logic here later.
+            if (deliveryListInput.value.trim().length > 0) {
+                deliveryListDropdown.style.display = 'block';
+            } else {
+                 // Keep dropdown visible even if input is cleared, as it was opened by click
+                 // deliveryListDropdown.style.display = 'none'; 
+                 // If you want it to hide when input is empty, uncomment the line above.
+            }
+        });
+
+        // Listener for clicking a dropdown item
+        deliveryListItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const selectedTextElement = this.querySelector('.order-form-delivery-list-item__text');
+                if (selectedTextElement && deliveryDefaultText) {
+                    deliveryDefaultText.textContent = selectedTextElement.textContent.trim();
+                }
+
+                // Hide the list and dropdown, show the default view for *this* instance
+                deliveryList.style.display = 'none';
+                deliveryListDropdown.style.display = 'none';
+                deliveryDefault.style.display = 'flex';
+                deliveryListInput.value = ''; // Clear the input field
+            });
+        });
+
+        // Listener for input blur - Hide if focus moves outside the component
+        deliveryListInput.addEventListener('blur', function(event) {
+            // Use setTimeout to allow click events on dropdown items to register first
+            setTimeout(() => {
+                const activeElement = document.activeElement;
+                // Check if the new active element is NOT the input itself and NOT inside the dropdown list
+                if (activeElement !== deliveryListInput && !deliveryListDropdown.contains(activeElement)) {
                     deliveryList.style.display = 'none';
-                    deliveryDefault.style.display = 'flex';
                     deliveryListDropdown.style.display = 'none';
-                    deliveryListInput.value = ''; // Clear input
+                    deliveryDefault.style.display = 'flex';
+                    deliveryListInput.value = '';
                 }
-            });
+            }, 0);
+        });
 
-            // If the input itself loses focus to something outside the list container, also switch back.
-            // This handles tabbing out.
-            deliveryListInput.addEventListener('blur', function(event) {
-                // Timeout to allow click on dropdown items to proceed
-                setTimeout(() => {
-                    const activeElement = document.activeElement;
-                    if (!deliveryList.contains(activeElement)) {
-                        deliveryList.style.display = 'none';
-                        deliveryDefault.style.display = 'flex';
-                        deliveryListDropdown.style.display = 'none';
-                        deliveryListInput.value = ''; // Clear input
-                    }
-                }, 0);
-            });
-        }
-    }
+    }); // End of forEach loop for delivery containers
+
+    // Global click listener to close any open delivery list if clicked outside
+    document.addEventListener('click', function(event) {
+        allDeliveryContainers.forEach(container => {
+            const list = container.querySelector('.order-form-delivery-list');
+            // If the list is visible AND the click was outside its container
+            if (list && list.style.display !== 'none' && !container.contains(event.target)) {
+                const defaultView = container.querySelector('.order-form-delivery__default');
+                const dropdown = container.querySelector('.order-form-delivery-list__dropdown');
+                const input = container.querySelector('.order-form-delivery-list__top input');
+                
+                list.style.display = 'none';
+                if(dropdown) dropdown.style.display = 'none';
+                if(defaultView) defaultView.style.display = 'flex';
+                if(input) input.value = '';
+            }
+        });
+    });
+    // Note: Removed the previous single-instance outside click/blur listeners 
+    // as they are now handled within the loop or the new global listener.
 
     // Delivery Method Radio Button Logic
     const deliveryMethodItems = document.querySelectorAll('.order-get-method-item');
@@ -1293,7 +1291,7 @@ $(document).ready(function () {
                 form.style.display = 'none';
             } else {
                 form.classList.add('active');
-                form.style.display = 'block';
+                form.style.display = 'flex';
             }
 
             radio.addEventListener('change', () => {
@@ -1305,56 +1303,65 @@ $(document).ready(function () {
                 // Show the selected one
                 if (radio.checked) {
                     form.classList.add('active');
-                    form.style.display = 'block';
+                    form.style.display = 'flex';
                 }
             });
         }
     });
 
-    // --- Tabs for .order-item-auth ---
-    var $authOrderTabs = $('.order-item-auth__top .order-item-auth__tab');
-    var $authOrderContentTabs = $('.order-item-auth__content .order-item-auth__content-tab');
-
-    function switchAuthOrderTab(tabIndex) {
-        if (tabIndex < 0 || tabIndex >= $authOrderTabs.length) {
-            console.warn('Auth order tab index out of bounds:', tabIndex);
-            return;
-        }
-        $authOrderTabs.removeClass('active');
-        $authOrderTabs.eq(tabIndex).addClass('active');
+    // IMPROVED FIX FOR CORPORATE PAYMENT FORM
+    $(document).ready(function() {
+        // Handle both payment form sections on the page
+        handlePaymentForm('payThrough4', 'delivery-pay-group');
+        handlePaymentForm('payThrough44', 'delivery-pay-group1');
         
-        $authOrderContentTabs.hide(); // Or use a class like .hidden and toggle it
-        if (tabIndex < $authOrderContentTabs.length) {
-            $authOrderContentTabs.eq(tabIndex).show(); // Or remove .hidden
-        } else {
-            console.warn('No corresponding content tab for auth order tab index:', tabIndex);
+        function handlePaymentForm(radioId, radioGroupName) {
+            const corpPayRadio = $('#' + radioId);
+            // Target the specific form that's a sibling of this radio's parent container
+            const corpPayForm = corpPayRadio.closest('.order-get-method-item').find('.order-get-method__form-sp');
+            
+            if (corpPayRadio.length && corpPayForm.length) {
+                // Initial state
+                function updateFormVisibility() {
+                    if (corpPayRadio.is(':checked')) {
+                        corpPayForm.show().css('display', 'flex');
+                        corpPayForm.addClass('active');
+                    } else {
+                        corpPayForm.hide();
+                        corpPayForm.removeClass('active');
+                    }
+                }
+                
+                // Set initial state
+                updateFormVisibility();
+                
+                // Listen for any change to any radio in the payment group
+                $('input[name="' + radioGroupName + '"]').change(function() {
+                    updateFormVisibility();
+                });
+            }
         }
-    }
-
-    if ($authOrderTabs.length > 0) {
-        $authOrderTabs.on('click', function() {
-            var clickedIndex = $(this).index();
-            switchAuthOrderTab(clickedIndex);
-        });
-
-        var initialActiveOrderIndex = $authOrderTabs.filter('.active').index();
         
-        if (initialActiveOrderIndex === -1 && $authOrderTabs.length > 0) {
-            initialActiveOrderIndex = 0; // Default to the first tab if no tab has 'active' class
+        // VIN Field Toggle
+        const vinFieldBox = $('.vin-field-box');
+        const rememberVinCheckbox = $('#rememberVin');
+        
+        if (vinFieldBox.length && rememberVinCheckbox.length) {
+            // Set initial state (hide by default)
+            vinFieldBox.hide();
+            
+            // Toggle visibility when checkbox changes
+            rememberVinCheckbox.on('change', function() {
+                if ($(this).is(':checked')) {
+                    vinFieldBox.show();
+                } else {
+                    vinFieldBox.hide();
+                }
+            });
+            
+            // Force re-evaluation of initial state (in case page loads with checkbox checked)
+            rememberVinCheckbox.trigger('change');
         }
-
-        // Ensure only the correct tab and content are active/visible initially
-        if (initialActiveOrderIndex !== -1) {
-             // First, ensure all are in a consistent state (all tabs inactive, all content hidden)
-            $authOrderTabs.removeClass('active');
-            $authOrderContentTabs.hide();
-            // Then, activate the determined initial tab and its content
-            switchAuthOrderTab(initialActiveOrderIndex);
-        } else if ($authOrderContentTabs.length > 0) {
-            // Fallback if no active tab and no tabs at all, but content exists (unlikely scenario)
-            // Hide all content except the first one by default if no tabs are present to control them.
-            $authOrderContentTabs.hide().first().show();
-        }
-    }
-    // --- End Tabs for .order-item-auth ---
+    });
 });
+

@@ -509,19 +509,15 @@ svg path {
     display: block;
     position: relative;
 }
-.catalog-header-box {
-	flex: 0 0 auto;
-}
-.catalog-header-box:hover .catalog-btn__menu span:nth-child(1){
-
+.catalog-btn:hover .catalog-btn__menu span:nth-child(1) {
     width: 16px;
     transform: rotate(45deg);
     top: 7px;
 }
-.catalog-header-box:hover .catalog-btn__menu span:nth-child(2) {
+.catalog-btn:hover .catalog-btn__menu span:nth-child(2) {
     opacity: 0;
 }
-.catalog-header-box:hover .catalog-btn__menu span:nth-child(3) {
+.catalog-btn:hover .catalog-btn__menu span:nth-child(3) {
     top: -5px;
     width: 16px;
     transform: rotate(-45deg);
@@ -800,7 +796,7 @@ main {
 .pick-tabs-top__item.active {
     color: var(--color-white);
     background: var(--color-blue);
-    cursor: default;
+    cursor: pointer;
 }
 
 .pick-top__angle {
@@ -814,7 +810,7 @@ main {
     border-radius: var(--radius-2px);
 }
 .pick-top__angle svg {
-    transition: 0.3s all;
+    transition: transform 0.3s ease;
 }
 .pick-top__angle svg path {
     fill: var(--color-gray);
@@ -1961,19 +1957,6 @@ p span {
     font-size: 16px;
     color: var(--color-btn-blue);
 }
-#vin-field {
-	width: 100%;
-}
-.vin-field-box {
-	padding: 10px;
-}
-#form-group-vin {
-	width: fit-content;
-}
-
-#form-group-vin  label:before{
-	border: 1px solid var(--color-gray-light);
-}
 .strip-line {
     width: 100%;
     height: 1px;
@@ -2304,54 +2287,12 @@ p span {
 }/* Order Get Method Styling */
 .order-get-method__form {
     display: none; /* Hide forms by default */
-	justify-content: space-between;
     margin-top: 20px; /* Add some space above the form */
-}
-.order-get-method__fields input {
-	width: calc(50% - 14px);
-}
-.order-get-method__fields input:first-child {
-	width: 100%;
-}
-.order-get-metghod--blue {
-	color: var(--color-blue);
-	font-size: 13px;
-	line-height: 30px;
-}
-.form-group-sp  label:before {
-	border: 1px solid var(--color-gray-light);
 }
 .order-get-method {
 	display: flex;
 	flex-direction: column;
-	gap: 34px;
-}
-.order-get-method__form-sp {
-	flex-direction: column;
-	gap: 16px;
-	padding: 0 16px;
-}
-.order-get-method-line__item input {
-	min-width: 410px;
-}
-.order-get-method__line {
-	gap: 18px;
-	padding: 18px 0;
-	display: flex;
-	flex-direction: column;
-}
-.order-get-method-line__item {
-	display: flex;
-	gap: 27px;
-}
-.order-get-method-line__item-title {
-	min-width: 160px;
-	align-items: center;
-	font-size: 16px;
-	font-weight: 500;
-}
-.order-get-method-line__item {
-	align-items: center;
+	gap: 23px;
 }
 .order-left-list .popup-basket-item:first-child {
 	border-bottom: 0;
@@ -2372,9 +2313,6 @@ p span {
 	line-height: 16px;
 	color: var(--color-gray);
 }
-.garage-list-form-subtitle {
-	display: block;
-}
 .order-footer {
 	padding: 60px 0;
 }
@@ -2383,11 +2321,9 @@ p span {
 }
 
 .order-get-method__fields {
-    display: flex;
-	flex-wrap: wrap;
-	justify-content: space-between;
-	width: 410px;
-	gap: 27px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive grid */
+    gap: 15px;
     margin-top: 10px;
 }
 
@@ -3166,7 +3102,6 @@ cursor: pointer;
     border: 1px solid var(--color-gray-light);
 }
 .order-form-delivery {
-	width: 100%;
 	margin-top: 18px;
 }
 .order-form-delivery__show {
@@ -3188,18 +3123,9 @@ transition: .3s all;
 	position: relative;
 	width: 100%;
 }
-.order-form-delivery-list {
-	position: relative;
-}
 .order-form-delivery-list__dropdown {
 	padding: 20px 18px;
-    box-shadow: 0 0 10px 0 var(--color-gray-light);
-    position: absolute;
-    top: 100%;
-	background: var(--color-white);
-    left: 0;
-    width: 100%;
-	z-index: 1;
+	box-shadow: 0 0 10px 0 var(--color-gray-light);
 }
 .order-form-delivery-list__all {
 	color: #000000;
@@ -3210,9 +3136,7 @@ transition: .3s all;
 .order-form-delivery-list-item {
 	display: flex;
 	align-items: center;
-	padding: 8px 0;
 	gap: 10px;
-	cursor: pointer;
 }
 .order-form-delivery-list-item__text {
 	font-size: 13px;
@@ -3657,14 +3581,6 @@ p.profile-order-dropdown__text-small {
 .mobile-menu .catalog-window {
     display: none;
 }
-#form-group-vin input:checked + label:before {
-	background: var(--color-blue);
-	border: 1px solid var(--color-blue);
-}
-#form-group-vin input:checked + label:after {
-	border: solid #fff;
-	border-width: 0 2px 2px 0;
-}
 /* FAULT END */
 @media screen and (max-width: 1600px) {
     .container {
@@ -3910,12 +3826,47 @@ p.profile-order-dropdown__text-small {
         margin-top: 30px;
     }
     .pick-tab-content-item {
-        max-height: 0;
+        max-height: 534px !important;
         display: block;
         overflow: auto;
         border-bottom: 1px solid var(--color-gray-light);
         transition: 0.3s all;
     }
+    
+    /* Make toggled class behave like active class below 1024px */
+    .pick-tabs-top__item.toggled {
+        background: var(--color-blue);
+        color: var(--color-white);
+        display: flex !important;
+        opacity: 1 !important;
+    }
+    
+    .pick-tabs-top__item.toggled .pick-top__angle {
+        background: var(--color-blue);
+    }
+    
+    .pick-tabs-top__item.toggled .pick-top__angle svg path {
+        fill: var(--color-white);
+    }
+    
+    .pick-tabs-top__item.toggled + .pick-tab-content-item {
+        max-height: 534px !important;
+        display: block;
+        opacity: 1;
+    }
+    
+    .pick-tab-mobile-item .pick-tabs-top__item.toggled + .pick-tab-content-item {
+        display: grid !important;
+        opacity: 1;
+        max-height: 534px !important;
+        overflow: auto;
+    }
+    
+    .brand-grid {
+        max-height: 534px !important;
+        overflow: auto;
+    }
+    
     .vin-table {
         flex-direction: column;
         box-shadow: 0 0 10px 0 var(--color-gray-light);
@@ -3968,7 +3919,8 @@ p.profile-order-dropdown__text-small {
         width: 100%;
     }
     .pick-tabs-top__item.active + .pick-tab-content-item {
-        max-height: 542px;
+        height: 542px;
+		overflow: auto;
     }
     .brand-cell,
     .brand-grid > .brand-cell:nth-last-child(-n + 10),
@@ -4327,6 +4279,11 @@ p.profile-order-dropdown__text-small {
         visibility: visible;
         opacity: 1;
     }
+    .mobile-menu {
+        /* display: block; */ /* Let JS handle this with .active class */
+        /* background: rgb(21 34 66 / 10%); */ /* Now white, as per request */
+        /* backdrop-filter: blur(3px); */
+    }
     .catalog-content-item__inner {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -4343,6 +4300,7 @@ p.profile-order-dropdown__text-small {
         gap: 5px;
         padding: 10px 15px;
         cursor: pointer;
+        border-bottom: 1px solid var(--color-gray-light);
         font-weight: 500;
     }
 
@@ -4469,58 +4427,18 @@ p.profile-order-dropdown__text-small {
     .catalog-box {
         box-shadow: unset;
     }
-	.preview {
-		padding-top: 52px;
-	}
-	.catalog-content-item__title svg,
-	.catalog-content-item__link svg {
-		display: none;
-	}
-	.recall-mob-number__call {
-		color: var(--color-blue);
-	}
-	.recall-mob-number__call:hover {
-		text-decoration: underline;
-	}
-	.garage-window,
-	.featured-window {
-		position: static;
-		opacity: 1;
-		visibility: visible;
-		transform: unset;
+	.brand-cell {
 		width: 100%;
 	}
-	.garage-window .window__content,
-	.featured-window  .window__content{
-		padding: 0;
-		box-shadow: unset;
-		margin: 0;
-		background: transparent;
-	}
-	.recall-mob-number__text {
-		color: var(--color-gray);
-	}
-	.recall-mob-number {
-		gap: 10px;
-		align-items: center;
-	}
-	.recall-mob-box {
-		display: flex;
-		flex-direction: column;
-		gap: 16px;
-		margin: 32px 0 0;
-	}	.featured-window {
-		width: 300px;
+	.brand-grid {
+		display: flex!important;
+		flex-wrap: wrap;
 	}
 }
 @media screen and (max-width: 830px) {
     .catalog-current {
         display: flex !important;
     }
-	.catalog-content-item__title svg,
-	.catalog-content-item__link svg {
-		display: block;
-	}
     .popular-item-info {
         flex-direction: column;
         align-items: flex-start;
@@ -4653,46 +4571,38 @@ p.profile-order-dropdown__text-small {
     .mobile-menu-bottom .catalog-content-item__link {
         padding: 16px;
         font-weight: 500;
-		border-bottom: 1px solid var(--color-gray-light);
         font-size: 14px;
-		text-decoration: unset;
-		align-items: center;
-		justify-content: space-between;
     }
     .catalog-content-item__inner {
         grid-template-columns: repeat(1, 1fr);
         gap: 0;
     }
+    .mobile-menu-bottom .catalog-content-item__link {
+        display: block; /* Ensure links are shown correctly in level 3 */
+        padding: 8px 15px 8px 30px; /* Indent links under titles */
+        border-bottom: 1px solid var(--color-gray-light); /* Separator for links */
+    }
     .mobile-menu-bottom .catalog-content-item__link:last-child {
         border-bottom: none;
     }
     .mobile-menu-bottom .catalog-content-item__link:hover {
-        background-color: var(--color-white-blue);text-decoration: unset;
+        background-color: var(--color-white-blue);
     }
     .mobile-menu-bottom .catalog-content-item__title {
         /* Make sure title is block or appropriately styled for interaction */
         display: block; /* Or flex, depending on layout */
+        padding: 10px 15px; /* Example padding */
         border-bottom: 1px solid var(--color-gray-light); /* Separator for titles */
         cursor: pointer; /* Already in JS, but good for clarity */
     }
     .mobile-menu-bottom .catalog-content-item__title:hover {
         background-color: var(--color-white-blue);
     }
-	.mobile-menu-bottom .catalog-tab:last-child {
-		border-bottom: 0;
-	}	
-	.catalog-content-item__inner .catalog-content-item__column:last-child .catalog-content-item__title {
-		border-bottom: 0;
-	}	
 }
 @media screen and (max-width: 768px) {
     .popular-list {
         grid-template-columns: repeat(2, 1fr);
     }
-	.garage-window-add {
-		flex-direction: column;
-		gap: 15px;
-	}
     .btn--blue {
         width: 100%;
         display: block;
@@ -4897,13 +4807,6 @@ p.profile-order-dropdown__text-small {
     :root {
         --star-size: 16px;
     }
-	.basket .basket__text {
-		display: none;
-	}
-	.garage-window-add {
-		flex-direction: column;
-		gap: 15px;
-	}
 	.order-left-item {
 		padding: 0;
 		box-shadow: unset;
@@ -5099,11 +5002,344 @@ p.profile-order-dropdown__text-small {
     .my-garage-correct-item {
         width: 100%;
     }
-	header .logo img{
-		width: 80px;
-	}
 }
 
-.order-get-method__line {
-    /* Remove display: none */
+/* Disabled tab styling */
+.disabled-tab {
+    pointer-events: none;
+    cursor: default;
+}
+
+/* Override all hover effects for disabled tabs */
+.pick-tabs-top__item.disabled-tab:hover {
+    background-color: transparent !important;
+}
+
+.pick-tabs-top__item.disabled-tab:hover .pick-top__angle {
+    background-color: transparent !important;
+}
+
+.pick-tabs-top__item.disabled-tab:hover .pick-top__angle svg path {
+    fill: #ffffff !important;
+}
+
+/* Also handle mobile-specific tabs */
+.pick-tab-mobile-item .pick-tabs-top__item.disabled-tab:hover {
+    background-color: transparent !important;
+}
+
+.pick-tab-mobile-item .pick-tabs-top__item.disabled-tab:hover .pick-top__angle {
+    background-color: transparent !important;
+}
+
+.pick-tab-mobile-item .pick-tabs-top__item.disabled-tab:hover .pick-top__angle svg path {
+    fill: #ffffff !important;
+}
+
+/* Add styles for toggled tab angles */
+.pick-tabs-top__item.active.toggled .pick-top__angle {
+    background: var(--color-red);
+}
+
+/* Rotate arrow when toggled */
+.pick-tabs-top__item.active.toggled .pick-top__angle svg {
+    transform: rotate(180deg);
+}
+
+/* Mobile version */
+.pick-tab-mobile-item .pick-tabs-top__item.active.toggled .pick-top__angle {
+    background: var(--color-red);
+}
+
+/* Mobile version arrow rotation */
+.pick-tab-mobile-item .pick-tabs-top__item.active.toggled .pick-top__angle svg {
+    transform: rotate(180deg);
+}
+
+/* Mobile version active tab cursor */
+.pick-tab-mobile-item .pick-tabs-top__item.active {
+    cursor: pointer;
+}
+
+/* Previous tab red arrow styling */
+.pick-tabs-top__item.active .pick-top__angle.red-arrow {
+    background: var(--color-red);
+}
+
+.pick-tabs-top__item.active .pick-top__angle.red-arrow svg path {
+    fill: var(--color-white);
+}
+
+/* Special styling for toggled state with red arrows */
+.pick-tabs-top__item.active.toggled .pick-top__angle[style*="background: var(--color-red)"] {
+    background: var(--color-red) !important;
+}
+
+.pick-tabs-top__item.active.toggled .pick-top__angle[style*="background: var(--color-red)"] svg {
+    transform: rotate(180deg);
+}
+
+/* Mobile version of the red arrows */
+.pick-tab-mobile-item .pick-tabs-top__item.active .pick-top__angle.red-arrow {
+    background: var(--color-red);
+}
+
+.pick-tab-mobile-item .pick-tabs-top__item.active .pick-top__angle.red-arrow svg path {
+    fill: var(--color-white);
+}
+
+.pick-tab-mobile-item .pick-tabs-top__item.active.toggled .pick-top__angle[style*="background: var(--color-red)"] {
+    background: var(--color-red) !important;
+}
+
+.pick-tab-mobile-item .pick-tabs-top__item.active.toggled .pick-top__angle[style*="background: var(--color-red)"] svg {
+    transform: rotate(180deg);
+}
+
+@media screen and (max-width: 830px) {
+    /* Ensure mobile catalog navigation is visible immediately on page load */
+    .pick-tab-mobile-item:first-child .pick-tab-content-item {
+        display: grid;
+        opacity: 1;
+        max-height: none;
+    }
+}
+
+/* Previous tab red arrow styling */
+.pick-tabs-top__item .pick-top__angle.red-arrow {
+    background: var(--color-red) !important;
+}
+
+.pick-tabs-top__item .pick-top__angle.red-arrow svg path {
+    fill: var(--color-white) !important;
+}
+
+/* Toggled states */
+.pick-tabs-top__item.active.toggled .pick-top__angle svg,
+.pick-tab-mobile-item .pick-tabs-top__item.active.toggled .pick-top__angle svg {
+    transform: rotate(180deg);
+}
+
+/* Mobile styles */
+@media screen and (max-width: 830px) {
+    /* Ensure mobile catalog navigation is visible immediately on page load */
+    .pick-tab-mobile-item:first-child .pick-tab-content-item {
+        display: grid;
+        opacity: 1;
+        max-height: none;
+    }
+}
+
+/* Specific styling for tabs after active but within furthestTabReached */
+.pick-tabs-top__item[style*="background: var(--color-blue)"] {
+    color: var(--color-white) !important;
+}
+
+/* Make sure the styles are maintained when toggling */
+.pick-tabs-top__item[style*="background: var(--color-blue)"].toggled {
+    background: var(--color-blue) !important;
+    color: var(--color-white) !important;
+}
+
+.pick-tabs-top__item[style*="background: var(--color-blue)"].toggled .pick-top__angle.red-arrow {
+    background: var(--color-red) !important;
+}
+
+/* Mobile version */
+.pick-tab-mobile-item .pick-tabs-top__item[style*="background: var(--color-blue)"] {
+    color: var(--color-white) !important;
+}
+
+.pick-tab-mobile-item .pick-tabs-top__item[style*="background: var(--color-blue)"].toggled {
+    background: var(--color-blue) !important;
+    color: var(--color-white) !important;
+}
+
+.pick-tab-mobile-item .pick-tabs-top__item[style*="background: var(--color-blue)"].toggled .pick-top__angle.red-arrow {
+    background: var(--color-red) !important;
+}
+
+/* Ensure first 3 tabs are always visible */
+.pick-tabs-top__item:nth-child(1),
+.pick-tabs-top__item:nth-child(2),
+.pick-tabs-top__item:nth-child(3) {
+    display: flex !important;
+}
+
+/* Ensure tabs beyond the 3rd are hidden by default */
+.pick-tabs-top__item:nth-child(n+4) {
+    display: none !important;
+}
+
+/* Additional styles for 4th tab when it should be visible */
+.pick-tabs-top__item:nth-child(4).active,
+.pick-tabs-top__item:nth-child(4)[style*="display: flex"] {
+    display: flex !important;
+    opacity: 1 !important;
+}
+
+/* Ensure the 4th tab is hidden when no selection in 3rd tab */
+.pick-tabs-top__item:nth-child(4).disabled-tab {
+    display: none !important;
+    opacity: 0.5 !important;
+}
+
+/* Add specific mobile overrides */
+@media screen and (max-width: 830px) {
+    /* Default mobile tab display */
+    .pick-tab-mobile-item:first-child .pick-tab-content-item {
+        display: grid;
+        opacity: 1;
+        max-height: none;
+    }
+    
+    /* Special styling for mobile 4th tab */
+    .pick-tab-mobile-item:nth-child(4) .pick-tabs-top__item.active,
+    .pick-tab-mobile-item:nth-child(4) .pick-tabs-top__item[style*="display: flex"] {
+        display: flex !important;
+        opacity: 1 !important;
+    }
+    
+    /* Hide 4th mobile tab by default */
+    .pick-tab-mobile-item:nth-child(4) .pick-tabs-top__item.disabled-tab {
+        display: none !important;
+        opacity: 0.5 !important;
+    }
+}
+
+@media screen and (max-width: 1024px) {
+    /* existing code */
+    
+    /* Make toggled tabs behave like active tabs */
+    .pick-tabs-top__item.toggled {
+        background: var(--color-blue);
+        color: var(--color-white);
+    }
+    
+    .pick-tabs-top__item.toggled .pick-top__angle {
+        background: var(--color-blue);
+    }
+    
+    .pick-tabs-top__item.toggled .pick-top__angle svg path {
+        fill: var(--color-white);
+    }
+    
+    .pick-tabs-top__item.toggled + .pick-tab-content-item {
+        max-height: 534px;
+        display: block;
+        opacity: 1;
+    }
+    
+    .pick-tab-mobile-item .pick-tabs-top__item.toggled + .pick-tab-content-item {
+        display: flex !important;
+        opacity: 1;
+        max-height: 534px;
+        overflow: visible;
+    }
+    
+    /* end of existing code */
+}
+
+/* Classes for tab and content visibility control */
+.hidden-tab {
+    display: none !important;
+}
+
+.hidden-content {
+    display: none !important;
+    max-height: 0 !important;
+    opacity: 0 !important;
+    overflow: hidden !important;
+}
+
+.visible-content {
+    display: grid !important;
+    opacity: 1 !important;
+    max-height: 534px !important;
+    overflow: auto !important;
+    transition: opacity 0.3s ease, max-height 0.3s ease !important;
+}
+
+.tab-highlighted {
+    background: var(--color-blue) !important;
+    color: var(--color-white) !important;
+}
+
+.tab-highlighted .pick-top__angle {
+    background: var(--color-red) !important;
+}
+
+.tab-highlighted .pick-top__angle svg path {
+    fill: var(--color-white) !important;
+}
+
+/* Override any remaining inline styles with !important */
+@media screen and (max-width: 1024px) {
+    .popular-list {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .pick-tabs-top__item.active .pick-top__angle,
+    .pick-tabs-top__item:hover .pick-top__angle {
+        background: #f44336;
+    }
+    .pick-tabs {
+        display: none;
+    }
+    .pick-tabs--mobile {
+        margin-top: 30px;
+    }
+    .pick-tab-content-item {
+        max-height: 534px !important;
+        display: block;
+        overflow: auto;
+        border-bottom: 1px solid var(--color-gray-light);
+        transition: 0.3s all;
+    }
+    
+    /* Make toggled class behave like active class below 1024px */
+    .pick-tabs-top__item.toggled {
+        background: var(--color-blue) !important;
+        color: var(--color-white) !important;
+        display: flex !important;
+        opacity: 1 !important;
+    }
+    
+    .pick-tabs-top__item.toggled .pick-top__angle {
+        background: var(--color-blue) !important;
+    }
+    
+    .pick-tabs-top__item.toggled .pick-top__angle svg path {
+        fill: var(--color-white) !important;
+    }
+    
+    .pick-tabs-top__item.toggled + .pick-tab-content-item {
+        max-height: 534px !important;
+        display: block !important;
+        opacity: 1 !important;
+    }
+    
+    .pick-tab-mobile-item .pick-tabs-top__item.toggled + .pick-tab-content-item {
+        display: grid !important;
+        opacity: 1 !important;
+        max-height: 534px !important;
+        overflow: auto !important;
+    }
+    
+    .brand-grid {
+        max-height: 534px !important;
+        overflow: auto !important;
+    }
+    
+    /* First tab should be visible by default */
+    .pick-tab-mobile-item:first-child .pick-tabs-top__item {
+        display: flex !important;
+        opacity: 1 !important;
+    }
+    
+    /* First tab content should be visible by default */
+    .pick-tab-mobile-item:first-child .pick-tab-content-item {
+        display: grid !important;
+        opacity: 1 !important;
+        max-height: 534px !important;
+    }
 }
