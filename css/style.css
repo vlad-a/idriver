@@ -331,15 +331,35 @@ svg path {
     border: 1px solid var(--color-blue);
     border-radius: 0 0 2px 2px;
     position: absolute;
-    top: 100%;
+    top: calc(100% + 1px);
     left: 0;
     background: var(--color-blue-dark);
-    width: 100%;
+    width: fit-content;
     border-top: 0;
+    padding: 16px 18px;
+    background: var(--color-white);
     z-index: 1;
     transition: 0.3s all;
     opacity: 0;
     visibility: hidden;
+}
+.call-dropdown .auth-line {
+    width: 100%;
+    height: 1px;
+    padding: 32px 0;
+}
+.call-dropdown .auth-line__text {
+    transform: rotate(0);
+}
+.call-dropdown .auth-line::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    height: 1px;
+    width: 100%;
+    top: 50%;
 }
 .call-phone__angle img {
     transition: 0.3s all;
@@ -756,12 +776,12 @@ main {
 }
 
 /* Убираем правую границу у последних в строке */
-.brand-grid > .brand-cell:nth-child(10n) {
+.brand-cell:nth-child(10n) {
     border-right: none;
 }
 
 /* Убираем нижнюю границу у последних 10 элементов (последняя строка) */
-.brand-grid > .brand-cell:nth-last-child(-n + 10) {
+.brand-cell:nth-last-child(-n + 10) {
     border-bottom: none;
 }
 
@@ -772,7 +792,6 @@ main {
 .pick-tabs-top__item {
     display: flex;
     transition: 0.3s all;
-    display: flex;
     justify-content: center;
     align-items: center;
     color: var(--color-gray);
@@ -781,9 +800,28 @@ main {
     padding: 25px 65px;
     font-size: 16px;
     line-height: 20px;
-    cursor: pointer;
+    cursor: default;
+    pointer-events: none;
+    opacity: 0.5;
     border-bottom: 1px solid transparent;
 }
+
+.pick-tabs-top__item.tab-can-hover {
+    cursor: pointer;
+    pointer-events: auto;
+    opacity: 1;
+}
+
+.pick-tabs-top__item:not(.tab-can-hover):hover {
+    background: transparent;
+    color: var(--color-gray);
+}
+
+.pick-tabs-top__item.tab-can-hover:hover {
+    background: var(--color-blue);
+    color: var(--color-white);
+}
+
 .pick-tabs-top__item:hover {
     color: var(--color-white);
     background: var(--color-blue);
@@ -866,8 +904,73 @@ main {
     gap: 30px;
     justify-content: space-between;
     border-radius: var(--radius-2px);
+	position: relative;
     padding: 0 12px 24px 12px;
     transition: 0.3s all;
+}
+.popular-item-heart {
+	position: absolute;
+    right: 20px;
+    top: 20px;
+    z-index: 1;
+}
+.popular-item-heart__tooltip {
+    position: absolute;
+    bottom: 100%;
+    right: 50%;
+    transform: translateX(50%);
+    background: #333;
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+    margin-bottom: 10px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.popular-item-heart__tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+}
+
+.popular-item-heart:hover .popular-item-heart__tooltip {
+    opacity: 1;
+    visibility: visible;
+}
+
+.popular-item-heart__icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    cursor: pointer;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 3px 6px 0 rgb(183 183 183 / 60%);
+    border-radius: var(--radius-2px);
+    background: #fff;
+    transition: all 0.3s ease;
+}
+
+.popular-item-heart__icon:hover {
+    box-shadow: 0 4px 8px 0 rgb(183 183 183 / 70%);
+    transform: translateY(-1px);
+}
+
+.popular-item-heart__icon.active svg path {
+    fill: #F44336;
+}
+
+.popular-item-heart__icon svg path {
+    transition: fill 0.3s ease;
 }
 .profile-aside .profile-aside__hide-main {
     display: none;
@@ -1024,6 +1127,23 @@ main {
     color: var(--color-black);
     font-size: 16px;
 }
+
+.brand-item__img {
+    max-width: 40px;
+    width: 100%;
+    max-height: 40px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.brand-item__img img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
 /* BRAND SECTION END */
 
 /* CATALOG SECTION START */
@@ -1125,7 +1245,46 @@ main {
     font-size: 14px;
     color: var(--color-black);
     line-height: 18px;
+    display: -webkit-box;
+	max-height: fit-content;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	text-overflow: ellipsis;
+    position: relative;
+    transition: max-height 0.4s ease;
 }
+
+.catalog-info__text.expanded {
+    max-height: none;
+	-webkit-line-clamp: unset;
+}
+.catalog-info-more__angle {
+	transition: .2s all;
+	display: flex;
+}
+.catalog-info-more__angle.active {
+	transform: rotate(180deg);
+}
+
+.catalog-info__text:not(.expanded)::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 25px;
+    background: linear-gradient(180deg, hsla(0, 0%, 100%, 0) 0, #fff);
+}
+
+.catalog-info-more {
+    gap: 8px;
+    align-items: center;
+    margin-top: 15px;
+    cursor: pointer;
+    display: flex;
+}
+
 .catalog-info-more__text {
     font-size: 14px;
     line-height: 20px;
@@ -1608,24 +1767,52 @@ footer .logo img {
     transform: rotate(45deg);
 }
 .popup {
-    position: fixed;
-    z-index: 1000;
-    width: 100%;
-    height: 100%;
-    top: 0;
     opacity: 0;
     visibility: hidden;
+    position: fixed;
+    top: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
     left: 0;
-    background: rgba(0, 0, 0, 0.2);
-    backdrop-filter: blur(10px);
-    display: flex;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
     transition: 0.3s all;
-    justify-content: center;
-    align-items: center;
+    pointer-events: none;
 }
+.garage-window {
+	width: 440px;
+}
+
 .popup.active {
     opacity: 1;
     visibility: visible;
+    pointer-events: auto;
+}
+
+.popup.active .window {
+	pointer-events: auto;
+}
+.popup-garage-inner .popup-close {
+    width: 27px;
+    height: 27px;
+    background: var(--color-white);
+    display: flex
+;
+    justify-content: center;
+    border: 1px solid var(--color-blue);
+    align-items: center;
+    border-radius: 100px;
+    right: 30px;
+    top: -38px;
+}
+.popup-garage-inner .popup-close:hover {
+	background: var(--color-blue);
+}
+.popup-garage-inner .popup-close:hover svg path {
+	fill: var(--color-white);
 }
 .popup__content {
     padding: 48px 32px 32px 32px;
@@ -1767,16 +1954,69 @@ footer .logo img {
 .window-text {
     color: var(--color-black);
 }
+.profile-vin-inner .vin-table-item {
+	width: 20%;
+}
+.vin-table-item a {
+	color: var(--color-blue);
+}
+.vin-table-item a:hover {
+	text-decoration: underline;
+}
+.vin-inner-btns a {
+	padding: 13px 16px;
+	align-items: center;
+	display: flex;
+}
+.profile-vin-box {
+	gap: 10px;
+	margin-bottom: 56px;
+}
+.profile-vin-inner .my-garage-correct-item input {
+ width: 100%;
+}
+.profile-vin-box .my-garage-correct__item {
+	width: 33.33%;
+}
+.profile-vin-box .my-garage-correct-item {
+	width: 100%;
+}
+.vin-inner-btns {
+	gap: 27px;
+}
 .window {
-    position: absolute;
-    right: 0;
-    top: 100%;
-    z-index: 1;
-    transition: 0.3s all;
-    width: 440px;
     opacity: 0;
     visibility: hidden;
-    transform: translateY(-3px);
+	z-index: 1;
+	right: 0;
+    position: absolute;
+    pointer-events: none;
+    transition: 0.3s all;
+}
+.basket__icon {
+	position: relative;
+}
+.notifications-count {
+    width: 21px;
+    height: 21px;
+	color: var(--color-black);
+    display: flex
+;
+    justify-content: center;
+    align-items: center;
+    background: var(--color-yellow);
+    font-size: 12px;
+    font-weight: 500;
+    border-radius: 100px;
+    position: absolute;
+	left: -12px;
+    top: -12px;
+}
+.window.active,
+.header-link:hover .window {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
 }
 
 .garage-window .radio-item {
@@ -1908,6 +2148,23 @@ footer .logo img {
     -webkit-transition: all 0.2s ease;
     transition: all 0.2s ease;
     border: 8px solid var(--color-blue);
+}
+.garage-inner-window {
+	opacity: 1;
+    visibility: visible;
+	padding: 0;
+	background: #fff;
+    position: static;
+}
+.popup-garage-inner {
+	z-index: 1001;
+}
+.popup-garage-inner .popup__content {
+	background: transparent;
+	border: 0;
+    padding: 0 25px;
+	width: 100%;
+
 }
 .radio-item [type="radio"]:not(:checked) + label:after {
     opacity: 0;
@@ -2066,6 +2323,7 @@ p span {
     display: flex;
     flex-direction: column;
     gap: 4px;
+	height: calc(100vh - 50px);
 }
 .profile-aside-item {
     padding: 12px 16px;
@@ -2694,6 +2952,7 @@ p span {
     justify-content: center;
     gap: 16px;
     background: transparent;
+	width: 100%;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
@@ -2901,6 +3160,13 @@ p span {
     font-weight: 500;
     line-height: 26px;
 }
+.pick-tabs-top__item.last-selected {
+    background: var(--color-blue);
+    color: var(--color-white);
+}
+.pick-tabs-top__item.last-selected  .pick-top__angle svg path {
+    fill: var(--color-white);
+}
 .popup-basket-item__left {
     width: 100%;
 }
@@ -2962,7 +3228,43 @@ p span {
 .my-garage-correct-item .my-garage-correct-item__to-correct {
     display: block; /* Default state: correct icon is visible */
 }
+.scroll-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: #fff;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    z-index: 999;
+    box-shadow: 0 0 10px var(--color-gray-light);
+    transform: translateY(0);
+}
 
+.scroll-to-top svg {
+    transition: all 0.3s ease;
+}
+
+.scroll-to-top:hover {
+    transform: translateY(-5px);
+}
+
+.scroll-to-top:hover svg path {
+    fill: #023E7C;
+}
+
+.scroll-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+}
 .my-garage-correct-item .my-garage-correct-item__to-close {
     display: none; /* Default state: close icon is hidden */
 }
@@ -3685,6 +3987,12 @@ p.profile-order-dropdown__text-small {
 	gap: 10px;
 	align-items: center;
 }
+.call-phone__angle {
+	transition: .2s all;
+}
+.call:hover .call-phone__angle {
+	transform: rotate(180deg);
+}
 .recall-mob-box {
 	display: flex;
 	flex-direction: column;
@@ -3695,6 +4003,11 @@ p.profile-order-dropdown__text-small {
 }
 .recall-mob-number__call {
 	color: var(--color-blue);
+	text-wrap: nowrap;
+}
+.recall-social {
+	align-items: center;
+	gap: 5px;
 }
 .recall-mob-number__call:hover {
 	text-decoration: underline;
@@ -3715,6 +4028,26 @@ p.profile-order-dropdown__text-small {
 	width: 100%;
 	top: 50%;
 }
+/* Input focus and active states */
+input:focus,
+input:active,
+textarea:focus,
+textarea:active {
+    outline: none;
+    border-color: #1A77D2 !important;
+    box-shadow: 0 0 0 1px #1A77D2;
+}
+
+.form-group input:focus + label:before,
+.form-group input:active + label:before {
+    border-color: #1A77D2;
+}
+
+/* Custom select focus state */
+.custom-select:focus-within .custom-select__trigger {
+    border-color: #1A77D2;
+}
+
 /* FAULT END */
 @media screen and (max-width: 1600px) {
     .container {
@@ -3879,7 +4212,7 @@ p.profile-order-dropdown__text-small {
         margin-top: 24px;
     }
     .pick-tabs-top__item {
-        padding: 23px 0;
+        padding: 23px 60px;
     }
     .spare-list {
         grid-template-columns: repeat(4, 1fr);
@@ -3949,12 +4282,93 @@ p.profile-order-dropdown__text-small {
     }
 }
 @media screen and (max-width: 1024px) {
-    .popular-list {
-        grid-template-columns: repeat(3, 1fr);
+    .pick-tab-mobile-item {
+        display: none;
+		border-bottom: 1px solid var(--color-gray-light);
     }
+    
+    /* Правило для 6-го элемента должно быть после базовых стилей и иметь такую же специфичность */
+    .brand-cell,
+    .brand-cell:nth-last-child(-n + 10),
+    .brand-cell:nth-child(10n),
+    .brand-cell:nth-child(6n) {
+        border-right: 1px solid var(--color-gray-light);
+        border-bottom: 1px solid var(--color-gray-light);
+    }
+
+    /* Отдельное правило для 6-го элемента с той же специфичностью */
+    .brand-cell.brand-cell:nth-child(6n) {
+        border-right: none;
+    }
+
+    .pick-tab-mobile-item:nth-child(-n+3) {
+        display: block;
+    }
+    
+    .pick-tab-content-item {
+        display: none;
+        max-height: none;
+        overflow: visible;
+    }
+    
+    .pick-tab-mobile-item.active .pick-tab-content-item {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        background: var(--color-white);
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    
+    /* Базовое состояние для всех табов */
+    .pick-tabs-top__item {
+        opacity: 0.5;
+    }
+    
+    /* Активный таб всегда синий */
+    .pick-tabs-top__item.active,
+    .pick-tabs-top__item.tab-can-hover.active {
+        color: var(--color-white);
+        background: var(--color-blue);
+        cursor: default;
+        opacity: 1;
+    }
+    
+    /* Стрелка при наведении и в активном состоянии */
     .pick-tabs-top__item.active .pick-top__angle,
     .pick-tabs-top__item:hover .pick-top__angle {
-        background: #f44336;
+        background: var(--color-blue-light);
+    }
+    
+    /* Стрелка когда контент свернут */
+    .pick-tab-mobile-item:not(.active) .pick-tabs-top__item.active .pick-top__angle {
+        background: var(--color-red);
+    }
+    
+    /* Поворот стрелки в активном состоянии */
+	.pick-tab-mobile-item.active .pick-tabs-top__item .pick-top__angle {
+		background: var(--color-blue-light);
+	}
+	 .pick-tab-mobile-item.active .pick-tabs-top__item .pick-top__angle svg path {
+		fill: var(--color-white);
+    }
+    /* Белая стрелка в активном состоянии */
+    .pick-tabs-top__item.active .pick-top__angle svg path {
+        fill: var(--color-white);
+    }
+    
+    /* Стилизация скроллбара */
+    .pick-tab-mobile-item.active .pick-tab-content-item::-webkit-scrollbar {
+        width: 4px;
+    }
+    
+    .pick-tab-mobile-item.active .pick-tab-content-item::-webkit-scrollbar-track {
+        background: var(--color-gray-light);
+        border-radius: 2px;
+    }
+    
+    .pick-tab-mobile-item.active .pick-tab-content-item::-webkit-scrollbar-thumb {
+        background: var(--color-blue);
+        border-radius: 2px;
     }
     .pick-tabs {
         display: none;
@@ -4017,22 +4431,22 @@ p.profile-order-dropdown__text-small {
     .vin-table-inner__text {
         display: block;
     }
-    .vin-table-item {
+	.profile-vin-inner .vin-table-item:last-child .vin-table-item__top {
+		display: block;
+	}
+    .vin-table-item,
+	.profile-vin-inner .vin-table-item {
         width: 100%;
     }
     .pick-tabs-top__item.active + .pick-tab-content-item {
         max-height: 542px;
     }
-    .brand-cell,
-    .brand-grid > .brand-cell:nth-last-child(-n + 10),
-    .brand-grid > .brand-cell:nth-child(10n) {
-        padding: 24.3px 8px;
-        border: 1px solid var(--color-gray-light);
-        border-top: 0;
-    }
-    .brand-grid > .brand-cell:last-child {
-        border-bottom: 0;
-    }
+	.brand-cell,
+	.brand-cell:nth-last-child(-n + 10),
+	.brand-cell:nth-child(10n) {
+		border-right: 1px solid var(--color-gray-light);
+		border-bottom: 1px solid var(--color-gray-light);
+	}
     .pick-tabs-top__item.active .pick-top__angle svg {
         transform: rotate(180deg);
     }
@@ -4544,6 +4958,89 @@ p.profile-order-dropdown__text-small {
 		margin: 0;
 		background: transparent;
 	}
+	.brand-grid {
+		grid-template-columns: repeat(6, 1fr);
+	}
+	.pick-tab-mobile-item.active .pick-tabs-top__item {
+		background: var(--color-blue);
+	}
+	.pick-tab-mobile-item.active .pick-tabs-top__item {
+	color: var(--color-white);
+	}
+	    .pick-tab-mobile-item {
+        display: none;
+    }
+    
+    .pick-tab-mobile-item:nth-child(-n+3) {
+        display: block;
+    }
+    
+    .pick-tab-content-item {
+        display: none;
+        max-height: none;
+        overflow: visible;
+    }
+    
+    .pick-tab-mobile-item.active .pick-tab-content-item {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        background: var(--color-white);
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    
+    /* Базовое состояние для всех табов */
+    .pick-tabs-top__item {
+        opacity: 0.5;
+    }
+    
+    /* Активный таб всегда синий */
+    .pick-tabs-top__item.active,
+    .pick-tabs-top__item.tab-can-hover.active {
+        color: var(--color-white);
+        background: var(--color-blue);
+        cursor: default;
+        opacity: 1;
+    }
+    
+    /* Стрелка при наведении и в активном состоянии */
+    .pick-tabs-top__item.active .pick-top__angle,
+    .pick-tabs-top__item:hover .pick-top__angle {
+        background: var(--color-blue-light);
+    }
+    
+    /* Стрелка когда контент свернут */
+    .pick-tab-mobile-item:not(.active) .pick-tabs-top__item.active .pick-top__angle {
+        background: var(--color-red);
+    }
+    
+
+    
+    /* Белая стрелка в активном состоянии */
+    .pick-tabs-top__item.active .pick-top__angle svg path {
+        fill: var(--color-white);
+    }
+    
+    /* Стилизация скроллбара */
+    .pick-tab-mobile-item.active .pick-tab-content-item::-webkit-scrollbar {
+        width: 4px;
+    }
+    
+    .pick-tab-mobile-item.active .pick-tab-content-item::-webkit-scrollbar-track {
+        background: var(--color-gray-light);
+        border-radius: 2px;
+    }
+    
+    .pick-tab-mobile-item.active .pick-tab-content-item::-webkit-scrollbar-thumb {
+        background: var(--color-blue);
+        border-radius: 2px;
+    }
+	.popup-garage-inner .popup__content {
+		overflow: visible;
+	}
+	.popup-garage-inner .pick-tabs--mobile {
+		margin-top: 0;
+	}
 }
 @media screen and (max-width: 830px) {
     .catalog-current {
@@ -4779,8 +5276,9 @@ p.profile-order-dropdown__text-small {
     .popup__content {
         padding: 48px 16px 32px;
     }
-    .popup-basket-empty .popup__content {
-        width: fit-content;
+    .popup-basket-empty .popup__content,
+	.popup-basket .popup__content {
+        width: 100%;
     }
     footer .auth-line__text {
         color: var(--color-white);
@@ -4943,6 +5441,59 @@ p.profile-order-dropdown__text-small {
 	.order-get-method {
 		padding-left: 0;
 	}
+
+    /* Меняем сетку на один столбец */
+    .brand-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Убираем правую границу у всех ячеек и оставляем только нижнюю */
+    .brand-cell,
+    .brand-cell:nth-child(6n),
+    .brand-cell:nth-child(10n),
+    .brand-cell:nth-last-child(-n + 10) {
+        border-right: none;
+        border-bottom: 1px solid var(--color-gray-light);
+    }
+
+    /* Убираем нижнюю границу у последнего элемента */
+    .brand-cell:last-child {
+        border-bottom: none;
+    }
+
+    /* Переопределяем сетку для мобильной версии */
+    .pick-tab-mobile-item.active .pick-tab-content-item {
+        grid-template-columns: 1fr;
+    }
+
+    /* Убираем правую границу у всех ячеек и оставляем только нижнюю */
+    .pick-tab-mobile-item.active .pick-tab-content-item .brand-cell,
+    .pick-tab-mobile-item.active .pick-tab-content-item .brand-cell:nth-child(6n),
+    .pick-tab-mobile-item.active .pick-tab-content-item .brand-cell:nth-child(10n),
+    .pick-tab-mobile-item.active .pick-tab-content-item .brand-cell:nth-last-child(-n + 10) {
+        border-right: none;
+        border-bottom: 1px solid var(--color-gray-light);
+    }
+
+    /* Убираем нижнюю границу у последнего элемента */
+    .pick-tab-mobile-item.active .pick-tab-content-item .brand-cell:last-child {
+        border-bottom: none;
+    } .scroll-to-top {
+        bottom: 20px;
+        right: 20px;
+    }  
+	.profile-vin-box {
+		flex-direction: column;
+	}
+	.profile-vin-box .my-garage-correct__item {
+		 width: 100%;
+	}
+	.vin-inner-btns a {
+		width: fit-content;
+	}
+	.profile-content-tab h2 {
+		font-size: 20px;
+	}
 }
 @media screen and (max-width: 576px) {
     :root {
@@ -4950,7 +5501,10 @@ p.profile-order-dropdown__text-small {
     }
 	.order-item-auth__tab {
 		padding: 14px 6px;
-	}
+	}     .scroll-to-top {
+        bottom: 15px;
+        right: 15px;
+    }
 	.order-header-logo svg {
 		width: 100px;
 	}
@@ -5165,4 +5719,14 @@ p.profile-order-dropdown__text-small {
 	.order-form-top, .order-get-method__fields {
 		width: 100%;
 	}
+}
+
+.profile-vin-content,
+.profile-vin-tab {
+    transition: opacity 0.3s ease-in-out;
+}
+
+.profile-vin-content:not(:visible),
+.profile-vin-tab:not(:visible) {
+    opacity: 0;
 }

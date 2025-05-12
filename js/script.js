@@ -140,24 +140,19 @@ $(document).ready(function () {
         button.addEventListener("click", function () {
             // Находим соответствующий текстовый блок
             const textBlock = this.previousElementSibling;
+            const buttonText = this.querySelector(".catalog-info-more__text");
+			const buttonAngle = this.querySelector(".catalog-info-more__angle");
 
             // Проверяем, что это действительно текстовый блок
             if (textBlock.classList.contains("catalog-info__text")) {
-                // Получаем полную высоту контента
-                const fullHeight = textBlock.scrollHeight;
-
-                // Устанавливаем новую высоту с анимацией
-                textBlock.style.maxHeight = `${fullHeight}px`;
-                textBlock.style.transition = "max-height 0.4s ease";
-
-                // Делаем кнопку прозрачной
-                this.style.opacity = "0";
-                this.style.transition = "opacity 0.4s ease";
-
-                // Удаляем кнопку после завершения анимации
-                setTimeout(() => {
-                    this.remove();
-                }, 400);
+                // Toggle expanded state
+                const isExpanded = textBlock.classList.toggle("expanded");
+                
+                // Update button text based on state
+                if (buttonText) {
+                    buttonText.textContent = isExpanded ? "Скрыть" : "Показать больше";
+					buttonAngle.classList.toggle("active");
+                }
             }
         });
     });
@@ -301,6 +296,9 @@ $(document).ready(function () {
             transition: opacity 0.5s ease-in, transform 0.5s ease-in;
             transform: scale(0.95);
             filter: blur(5px);
+            will-change: opacity, transform;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
         }
         img.lazy.loaded {
             opacity: 1;
@@ -328,41 +326,40 @@ $(document).ready(function () {
                 // Добавляем класс для стилей
                 img.classList.add("lazy");
 
-                // Сохраняем оригинальный src в data-src и заменяем src на пустышку
+                // Сохраняем оригинальный src в data-src
                 img.dataset.src = originalSrc;
-                img.src =
-                    'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"%3E%3C/svg%3E';
+                
+                // Используем прозрачный 1x1 пиксель вместо SVG для лучшей совместимости
+                img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
             }
         });
 
         // Функция загрузки с IntersectionObserver
         const lazyLoad = () => {
-            // Создаем наблюдатель
             if ("IntersectionObserver" in window) {
-                const observer = new IntersectionObserver(
-                    (entries) => {
+                const imageObserver = new IntersectionObserver(
+                    (entries, observer) => {
                         entries.forEach((entry) => {
                             if (entry.isIntersecting) {
                                 const img = entry.target;
-
-                                // Загружаем изображение, если есть data-src
                                 if (img.dataset.src) {
-                                    const newImg = new Image();
-                                    newImg.src = img.dataset.src;
+                                    // Создаем временное изображение для предзагрузки
+                                    const tempImg = new Image();
 
-                                    newImg.onload = () => {
+                                    tempImg.onload = () => {
+                                        requestAnimationFrame(() => {
                                         img.src = img.dataset.src;
                                         img.classList.add("loaded");
                                         img.removeAttribute("data-src");
+                                        });
                                     };
 
-                                    newImg.onerror = () => {
-                                        img.src =
-                                            'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"%3E%3C/svg%3E';
+                                    tempImg.onerror = () => {
+                                        img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
                                         img.style.opacity = "0.3";
                                     };
 
-                                    // Прекращаем наблюдение
+                                    tempImg.src = img.dataset.src;
                                     observer.unobserve(img);
                                 }
                             }
@@ -370,22 +367,20 @@ $(document).ready(function () {
                     },
                     {
                         rootMargin: "50px 0px",
-                        threshold: 0.1,
+                        threshold: 0.1
                     }
                 );
 
-                // Наблюдаем за всеми изображениями с классом lazy
                 document.querySelectorAll("img.lazy").forEach((img) => {
-                    observer.observe(img);
+                    imageObserver.observe(img);
                 });
-            }
-            // Запасной вариант для старых браузеров
-            else {
-                // Загрузка всех изображений сразу для старых браузеров
+            } else {
+                // Запасной вариант для браузеров без поддержки IntersectionObserver
                 document.querySelectorAll("img.lazy").forEach((img) => {
                     if (img.dataset.src) {
                         img.src = img.dataset.src;
                         img.classList.add("loaded");
+                        img.removeAttribute("data-src");
                     }
                 });
             }
@@ -1388,5 +1383,127 @@ $(document).ready(function () {
                 counterDisplay.textContent = count;
             });
         }
+    });
+
+    // Add heart block click handler
+    document.querySelectorAll('.popular-item-heart').forEach(heartBlock => {
+        heartBlock.addEventListener('click', function() {
+            const icon = this.querySelector('.popular-item-heart__icon');
+            const tooltip = this.querySelector('.popular-item-heart__tooltip');
+            
+            // Toggle active class
+            if (icon) {
+                icon.classList.toggle('active');
+            }
+            
+            // Update tooltip text
+            if (tooltip) {
+                tooltip.textContent = icon.classList.contains('active') ? 'добавлено' : 'в избранное';
+            }
+        });
+    });
+
+    // Scroll to top functionality
+    const scrollButton = $('<button>', {
+        class: 'scroll-to-top',
+        html: '<svg width="15" height="9" viewBox="0 0 15 9" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M14.2066 8.20662C14.0191 8.39389 13.7649 8.49908 13.4999 8.49908C13.2349 8.49908 12.9807 8.39389 12.7932 8.20662L7.4999 2.91329L2.20657 8.20662C2.11502 8.30487 2.00462 8.38368 1.88196 8.43833C1.75929 8.49299 1.62687 8.52238 1.4926 8.52475C1.35833 8.52712 1.22496 8.50242 1.10044 8.45212C0.975923 8.40183 0.862812 8.32697 0.767854 8.23201C0.672895 8.13705 0.598035 8.02394 0.547741 7.89942C0.497446 7.7749 0.472746 7.64153 0.475115 7.50726C0.477484 7.37299 0.506873 7.24057 0.561529 7.11791C0.616185 6.99524 0.694989 6.88484 0.793238 6.79329L6.79324 0.793292C6.98074 0.606025 7.2349 0.500838 7.4999 0.500838C7.7649 0.500838 8.01907 0.606025 8.20657 0.793292L14.2066 6.79329C14.3938 6.98079 14.499 7.23496 14.499 7.49996C14.499 7.76496 14.3938 8.01912 14.2066 8.20662Z" fill="#1B78D3"/></svg>'
+    });
+    
+    $('body').append(scrollButton);
+    
+    // Add CSS file
+    $('<link>')
+        .attr({
+            rel: 'stylesheet',
+            href: 'css/scroll-to-top.css'
+        })
+        .appendTo('head');
+
+    // Show/hide button based on scroll position
+    $(window).scroll(function() {
+        if ($(this).scrollTop() > 300) {
+            scrollButton.addClass('visible');
+        } else {
+            scrollButton.removeClass('visible');
+        }
+    });
+
+    // Scroll to top when clicked
+    scrollButton.click(function() {
+        $('html, body').animate({
+            scrollTop: 0
+        }, 800);
+        return false;
+    });
+
+    // Load Inputmask plugin
+    const inputmaskScript = document.createElement('script');
+    inputmaskScript.src = 'https://cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.8/jquery.inputmask.min.js';
+    document.head.appendChild(inputmaskScript);
+
+    inputmaskScript.onload = function() {
+        // Initialize phone masks for all tel inputs
+        $('input[type="tel"]').inputmask('+38(099) 999-99-99', {
+            placeholder: '_',
+            showMaskOnHover: false,
+            showMaskOnFocus: true,
+            clearIncomplete: true,
+            clearMaskOnLostFocus: true,
+            autoUnmask: true
+        });
+    };
+
+    // Garage input fields edit functionality
+    $('.my-garage-correct-item').each(function() {
+        const item = $(this);
+        const input = item.find('input');
+        const editIcon = item.find('.my-garage-correct-item__to-correct');
+        const closeIcon = item.find('.my-garage-correct-item__to-close');
+
+        // Enable editing on input focus or edit icon click
+        input.on('focus', function() {
+            item.addClass('active');
+        });
+
+        // Remove active class on input blur (unless clicking the close icon)
+        input.on('blur', function(e) {
+            // Небольшая задержка, чтобы успеть обработать клик по крестику
+            setTimeout(function() {
+                if (!$(e.relatedTarget).closest('.my-garage-correct-item__to-close').length) {
+                    item.removeClass('active');
+                }
+            }, 100);
+        });
+
+        editIcon.on('click', function() {
+            item.addClass('active');
+            input.focus();
+        });
+
+        // Disable editing on close icon click
+        closeIcon.on('click', function() {
+            item.removeClass('active');
+            input.blur();
+        });
+    });
+
+    // VIN View Toggle Functionality
+    $(document).ready(function() {
+        // Hide profile-vin-content initially
+        $('.profile-vin-content').hide();
+
+        // Show content when clicking view button
+        $('.vin-table-item__inner--view').click(function(e) {
+            e.preventDefault();
+            $('.profile-vin-tab').hide();
+            $('.profile-vin-content').fadeIn(300);
+        });
+
+        // Hide content when clicking back button
+        $('.vin-inner-btns .btn--transparent').click(function(e) {
+            e.preventDefault();
+            $('.profile-vin-content').hide();
+            $('.profile-vin-tab').fadeIn(300);
+        });
     });
 });

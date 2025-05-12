@@ -1,131 +1,271 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Get all tab items and tab content items
-    const tabItems = document.querySelectorAll('.pick-tabs-top__item');
-    const tabContentItems = document.querySelectorAll('.pick-tab-content-item');
-    const brandCells = document.querySelectorAll('.brand-cell');
-    const mobileTabItems = document.querySelectorAll('.pick-tab-mobile-item');
-    const mobileTabs = document.querySelector('.pick-tabs--mobile');
-    
-    // Store the selected items and last active tab index
-    const selectedItems = {
-        brand: null,
-        model: null,
-        year: null,
-        bodyType: null,
-        engineSize: null,
-        modification: null
-    };
-    
-    let lastActiveTabIndex = 0;
-    let currentActiveTabIndex = 0;
-    let isContentCollapsed = false;
-    
-    // Initial setup
-    function initializeTabs() {
-        // Initially show only first 3 tabs
-        tabItems.forEach((tab, index) => {
-            if (index > 2) {
-                tab.style.display = 'none';
-            }
-            // Store original text for resetting
-            const pickTopTextElement = tab.querySelector('.pick-top__text');
-            if (pickTopTextElement) {
-                tab.dataset.originalText = pickTopTextElement.textContent.trim();
-            }
-        });
+    // Находим все контейнеры pick-tabs на странице
+    const pickTabsContainers = document.querySelectorAll('.pick-tabs, .pick-tabs--mobile');
+
+    // Инициализируем каждый контейнер отдельно
+    pickTabsContainers.forEach(container => {
+        initializePickTabsContainer(container);
+    });
+
+    function initializePickTabsContainer(container) {
+        // Get all tab items and tab content items within this container
+        const tabItems = container.querySelectorAll('.pick-tabs-top__item');
+        const tabContentItems = container.querySelectorAll('.pick-tab-content-item');
+        const brandCells = container.querySelectorAll('.brand-cell');
+        const mobileTabItems = container.querySelectorAll('.pick-tab-mobile-item');
+        const isMobile = container.classList.contains('pick-tabs--mobile');
         
-        // Initially show first tab content
-        activateTab(0);
+        // Store the selected items and last active tab index for this container
+        const selectedItems = {
+            brand: null,
+            model: null,
+            year: null,
+            bodyType: null,
+            engineSize: null,
+            modification: null
+        };
         
-        // Add a class to handle hover state
-        tabItems.forEach(tab => {
-            tab.classList.add('tab-can-hover');
-        });
+        let lastActiveTabIndex = 0;
+        let currentActiveTabIndex = 0;
+        let isContentCollapsed = false;
+
+        // Initialize based on container type
+        if (isMobile) {
+            initializeMobileTabs();
+        } else {
+            initializeDesktopTabs();
+        }
         
-        // Set click events for tabs
-        tabItems.forEach((tab, index) => {
-            tab.addEventListener('click', function(e) {
-                // Only allow clicking on tabs before or equal to the last active tab
-                if (index <= lastActiveTabIndex) {
-                    // Check if clicking on currently active tab
-                    if (index === currentActiveTabIndex) {
-                        // Toggle content visibility
-                        isContentCollapsed = !isContentCollapsed;
-                        
-                        if (isContentCollapsed) {
-                            // Hide content
-                            if (tabContentItems[index]) {
-                                tabContentItems[index].style.display = 'none';
-                            }
-                            
-                            // Make arrow red
-                            const angle = tab.querySelector('.pick-top__angle');
-                            if (angle) {
-                                angle.style.background = 'var(--color-red)';
-                            }
-                        } else {
-                            // Show content
-                            if (tabContentItems[index]) {
-                                tabContentItems[index].style.display = 'grid';
-                            }
-                            
-                            // Reset arrow color
-                            const angle = tab.querySelector('.pick-top__angle');
-                            if (angle) {
-                                angle.style.background = '';
-                            }
-                            
-                            // Ensure active styling
-                            updateTabsVisuals();
-                        }
-                    } else {
-                        // Update current active tab
-                        currentActiveTabIndex = index;
-                        isContentCollapsed = false;
-                        activateTab(index);
-                    }
+        // Initialize brand cells for this container
+        initializeBrandCells();
+
+        function initializeDesktopTabs() {
+            // Initially show only first 3 tabs
+            tabItems.forEach((tab, index) => {
+                if (index > 2) {
+                    tab.style.display = 'none';
+                }
+                // Store original text for resetting
+                const pickTopTextElement = tab.querySelector('.pick-top__text');
+                if (pickTopTextElement) {
+                    tab.dataset.originalText = pickTopTextElement.textContent.trim();
                 }
             });
-        });
-        
-        // Set click events for mobile tabs
-        if (mobileTabItems.length > 0) {
-            mobileTabItems.forEach((tab, index) => {
+            
+            // Initially show first tab content
+            activateTab(0);
+            
+            // Add a class to handle hover state only for active tabs
+            tabItems.forEach((tab, index) => {
+                if (index <= lastActiveTabIndex) {
+                    tab.classList.add('tab-can-hover');
+                } else {
+                    tab.classList.remove('tab-can-hover');
+                }
+            });
+            
+            // Set click events for desktop tabs
+            tabItems.forEach((tab, index) => {
                 tab.addEventListener('click', function(e) {
-                    // Only allow clicking on tabs before or equal to the last active mobile tab
                     if (index <= lastActiveTabIndex) {
-                        const wasActive = tab.classList.contains('active');
-                        
-                        // Update current active tab for mobile
-                        currentActiveTabIndex = index;
-                        activateMobileTab(index);
-                        
-                        // Toggle pick-tab-content-item visibility in mobile view
-                        const tabContent = tab.querySelector('.pick-tab-content-item');
-                        
-                        if (wasActive && tabContent) {
-                            // If it was already active, toggle the content
-                            if (tabContent.style.maxHeight !== '0px') {
-                                tabContent.style.maxHeight = '0px';
+                        if (index === currentActiveTabIndex) {
+                            isContentCollapsed = !isContentCollapsed;
+                            
+                            if (isContentCollapsed) {
+                                if (tabContentItems[index]) {
+                                    tabContentItems[index].style.display = 'none';
+                                }
+                                
+                                const angle = tab.querySelector('.pick-top__angle');
+                                if (angle) {
+                                    angle.style.background = 'var(--color-red)';
+                                }
                             } else {
-                                tabContent.style.maxHeight = tabContent.scrollHeight + 'px';
+                                if (tabContentItems[index]) {
+                                    tabContentItems[index].style.display = 'grid';
+                                }
+                                
+                                const angle = tab.querySelector('.pick-top__angle');
+                                if (angle) {
+                                    angle.style.background = '';
+                                }
+                                
+                                updateTabsVisuals();
                             }
+                        } else {
+                            currentActiveTabIndex = index;
+                            isContentCollapsed = false;
+                            activateTab(index);
                         }
                     }
                 });
             });
         }
-        
-        // Set click events for brand cells
-        brandCells.forEach(cell => {
-            cell.addEventListener('click', function() {
-                // Store the selected value
-                const cellText = cell.textContent.trim();
+
+        function initializeMobileTabs() {
+            if (mobileTabItems.length > 0) {
+                // Store original text for all tabs
+                mobileTabItems.forEach(tab => {
+                    const header = tab.querySelector('.pick-tabs-top__item');
+                    const text = header?.querySelector('.pick-top__text');
+                    if (header && text) {
+                        header.dataset.originalText = text.textContent.trim();
+                    }
+                });
+
+                // Initially show first 3 tabs but make only first one active
+                mobileTabItems.forEach((tab, index) => {
+                    const header = tab.querySelector('.pick-tabs-top__item');
+                    
+                    if (header) {
+                        if (index === 0) {
+                            tab.style.display = 'block';
+                            tab.classList.add('active');
+                            header.style.opacity = '1';
+                            header.classList.add('tab-can-hover');
+                            const content = tab.querySelector('.pick-tab-content-item');
+                            if (content) {
+                                content.style.display = 'grid';
+                            }
+                        } else if (index <= 2) {
+                            tab.style.display = 'block';
+                            header.style.opacity = '0.5';
+                            header.classList.remove('tab-can-hover');
+                            const content = tab.querySelector('.pick-tab-content-item');
+                            if (content) {
+                                content.style.display = 'none';
+                            }
+                        } else {
+                            tab.style.display = 'none';
+                            header.style.opacity = '0.5';
+                            header.classList.remove('tab-can-hover');
+                        }
+                        
+                        header.addEventListener('click', function() {
+                            if (index <= lastActiveTabIndex) {
+                                const wasActive = tab.classList.contains('active');
+                                const content = tab.querySelector('.pick-tab-content-item');
+                                const angleContainer = header.querySelector('.pick-top__angle');
+                                
+                                if (wasActive) {
+                                    if (content) {
+                                        if (content.style.display === 'grid') {
+                                            content.style.display = 'none';
+                                            if (angleContainer) {
+                                                angleContainer.style.background = 'var(--color-red)';
+                                            }
+                                        } else {
+                                            content.style.display = 'grid';
+                                            if (angleContainer) {
+                                                angleContainer.style.background = '';
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    let currentActiveTab = null;
+                                    let currentActiveIndex = -1;
+                                    mobileTabItems.forEach((item, idx) => {
+                                        if (item.classList.contains('active')) {
+                                            currentActiveTab = item;
+                                            currentActiveIndex = idx;
+                                        }
+                                    });
+
+                                    const noLastSelectedExists = !Array.from(mobileTabItems).some(item => 
+                                        item.querySelector('.pick-tabs-top__item')?.classList.contains('last-selected')
+                                    );
+
+                                    if (currentActiveIndex === lastActiveTabIndex && index < currentActiveIndex && noLastSelectedExists) {
+                                        const currentHeader = currentActiveTab.querySelector('.pick-tabs-top__item');
+                                        if (currentHeader) {
+                                            currentHeader.classList.add('last-selected');
+                                            const currentAngle = currentHeader.querySelector('.pick-top__angle');
+                                            if (currentAngle) {
+                                                currentAngle.style.background = 'var(--color-red)';
+                                            }
+                                        }
+                                    }
+
+                                    if (currentActiveTab) {
+                                        currentActiveTab.classList.remove('active');
+                                        const currentContent = currentActiveTab.querySelector('.pick-tab-content-item');
+                                        if (currentContent) {
+                                            currentContent.style.display = 'none';
+                                        }
+                                    }
+
+                                    tab.classList.add('active');
+                                    if (content) {
+                                        content.style.display = 'grid';
+                                    }
+                                    if (angleContainer) {
+                                        angleContainer.style.background = '';
+                                    }
+
+                                    if (index >= 2 && index < mobileTabItems.length - 1) {
+                                        const nextTab = mobileTabItems[index + 1];
+                                        if (nextTab) {
+                                            nextTab.style.display = 'block';
+                                            const nextHeader = nextTab.querySelector('.pick-tabs-top__item');
+                                            if (nextHeader) {
+                                                nextHeader.style.opacity = '1';
+                                                nextHeader.classList.add('tab-can-hover');
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    }
+                });
+            }
+        }
+
+        function initializeBrandCells() {
+            brandCells.forEach(cell => {
+                cell.addEventListener('click', function() {
+                    const cellText = cell.textContent.trim();
+                    const mobileTab = cell.closest('.pick-tab-mobile-item');
+                    const isCurrentlyActive = cell.classList.contains('active');
+                    
+                    if (!mobileTab) {
+                        handleDesktopCellClick(cell, cellText, isCurrentlyActive);
+                    } else {
+                        handleMobileCellClick(cell, cellText, mobileTab, isCurrentlyActive);
+                    }
+                });
+            });
+        }
+
+        function handleDesktopCellClick(cell, cellText, isCurrentlyActive) {
+            const activeIndex = currentActiveTabIndex;
+            
+            if (!isCurrentlyActive) {
+                if (activeIndex === 0) {
+                    tabItems.forEach((tab, index) => {
+                        tab.classList.remove('last-selected');
+                        const angle = tab.querySelector('.pick-top__angle');
+                        if (angle) {
+                            angle.style.background = '';
+                        }
+                        if (index > 2) {
+                            tab.style.display = 'none';
+                            tab.style.opacity = '0.5';
+                        }
+                    });
+                    lastActiveTabIndex = 0;
+                }
                 
-                // Find which tab is active
-                const activeIndex = currentActiveTabIndex;
+                // Сбрасываем значения всех последующих табов к их оригинальным значениям
+                tabItems.forEach((tab, index) => {
+                    if (index > activeIndex) {
+                        const textElement = tab.querySelector('.pick-top__text');
+                        if (textElement && tab.dataset.originalText) {
+                            textElement.textContent = tab.dataset.originalText;
+                        }
+                    }
+                });
                 
-                // Update the corresponding pick-top__text
                 if (tabItems[activeIndex]) {
                     const pickTopTextElement = tabItems[activeIndex].querySelector('.pick-top__text');
                     if (pickTopTextElement) {
@@ -133,255 +273,216 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
                 
-                // Store the selected item based on the active tab
-                switch(activeIndex) {
-                    case 0: selectedItems.brand = cellText; break;
-                    case 1: selectedItems.model = cellText; break;
-                    case 2: selectedItems.year = cellText; break;
-                    case 3: selectedItems.bodyType = cellText; break;
-                    case 4: selectedItems.engineSize = cellText; break;
-                    case 5: selectedItems.modification = cellText; break;
-                    default: // Handle any additional tabs
-                        console.log(`Selection for tab ${activeIndex}: ${cellText}`);
-                        break;
-                }
-                
-                // Highlight the selected cell
                 const parent = cell.closest('.pick-tab-content-item');
                 if (parent) {
-                    // Only clear selection within this tab's content
                     const cellsInTab = parent.querySelectorAll('.brand-cell');
                     cellsInTab.forEach(c => c.classList.remove('active'));
                     cell.classList.add('active');
-                } else {
-                    // Fallback to clear all if we can't find parent
-                    brandCells.forEach(c => c.classList.remove('active'));
-                    cell.classList.add('active');
                 }
                 
-                // If we're changing a selection in the current tab, reset all tabs after this one
-                const parentTabContent = cell.closest('.pick-tab-content-item');
-                if (parentTabContent && currentActiveTabIndex === Array.from(tabContentItems).indexOf(parentTabContent)) {
-                    // Hide all tabs after the current one and reset their text
-                    for (let i = activeIndex + 1; i < tabItems.length; i++) {
-                        if (i > 2) { // Keep the first 3 tabs always visible (or adjust as needed)
-                            tabItems[i].style.display = 'none';
-                        }
-                        // Reset the text of the tab's pick-top__text
-                        const pickTopTextToReset = tabItems[i].querySelector('.pick-top__text');
-                        if (pickTopTextToReset && tabItems[i].dataset.originalText) {
-                            pickTopTextToReset.textContent = tabItems[i].dataset.originalText;
-                        }
-                    }
-                    
-                    // Reset lastActiveTabIndex to current tab
-                    lastActiveTabIndex = activeIndex;
-                }
-                
-                // Only proceed if we're not on the last tab
                 if (activeIndex < tabItems.length - 1) {
-                    // Update the last active tab index
                     lastActiveTabIndex = Math.max(lastActiveTabIndex, activeIndex + 1);
+                    const nextTab = tabItems[activeIndex + 1];
                     
-                    // Show the next tab
-                    tabItems[activeIndex + 1].style.display = 'flex';
+                    if (nextTab) {
+                        if (activeIndex <= 1) {
+                            if (activeIndex + 1 <= 2) {
+                                nextTab.style.display = 'flex';
+                                nextTab.classList.add('tab-can-hover');
+                            }
+                        } else {
+                            nextTab.style.display = 'flex';
+                            nextTab.classList.add('tab-can-hover');
+                        }
+                    }
                     
-                    // Update current active tab to the next one
                     currentActiveTabIndex = activeIndex + 1;
-                    
-                    // Reset the collapsed state
                     isContentCollapsed = false;
-                    
-                    // Activate next tab
                     activateTab(currentActiveTabIndex);
-                    
-                    // If mobile tabs exist, also activate the next mobile tab
-                    if (mobileTabItems.length > 0 && window.innerWidth <= 1024) {
-                        const activeMobileIndex = Array.from(mobileTabItems).findIndex(t => t.classList.contains('active'));
+                }
+            } else {
+                if (activeIndex < tabItems.length - 1) {
+                    currentActiveTabIndex = activeIndex + 1;
+                    isContentCollapsed = false;
+                    activateTab(currentActiveTabIndex);
+                }
+            }
+        }
+
+        function handleMobileCellClick(cell, cellText, mobileTab, isCurrentlyActive) {
+            const mobileIndex = Array.from(mobileTabItems).indexOf(mobileTab);
+            const header = mobileTab.querySelector('.pick-top__text');
+            
+            if (!isCurrentlyActive) {
+                if (header) {
+                    header.textContent = cellText;
+                }
+                
+                Object.keys(selectedItems).forEach((key, idx) => {
+                    if (idx === mobileIndex) {
+                        selectedItems[key] = cellText;
+                    } else if (idx > mobileIndex) {
+                        selectedItems[key] = null;
+                    }
+                });
+                
+                mobileTabItems.forEach((item, idx) => {
+                    if (idx > mobileIndex) {
+                        const itemHeader = item.querySelector('.pick-top__text');
+                        const parentTab = item.querySelector('.pick-tabs-top__item');
+                        if (itemHeader && parentTab) {
+                            itemHeader.textContent = parentTab.dataset.originalText || itemHeader.textContent;
+                        }
                         
-                        // If we're on the mobile view and there's a next tab
-                        if (activeMobileIndex < mobileTabItems.length - 1) {
-                            // Close current mobile tab content
-                            const currentMobileTab = mobileTabItems[activeMobileIndex];
-                            const currentContent = currentMobileTab.querySelector('.pick-tab-content-item');
-                            if (currentContent) {
-                                currentContent.style.maxHeight = '0';
+                        item.classList.remove('active');
+                        if (parentTab) {
+                            parentTab.classList.remove('last-selected', 'active', 'tab-can-hover');
+                            parentTab.style.opacity = '0.5';
+                            const angle = parentTab.querySelector('.pick-top__angle');
+                            if (angle) {
+                                angle.style.background = '';
                             }
-                            
-                            // Activate next mobile tab
-                            activateMobileTab(activeMobileIndex + 1);
-                            
-                            // Expand next mobile tab content
-                            const nextMobileTab = mobileTabItems[activeMobileIndex + 1];
-                            const nextContent = nextMobileTab.querySelector('.pick-tab-content-item');
-                            if (nextContent) {
-                                nextContent.style.maxHeight = nextContent.scrollHeight + 'px';
-                            }
+                        }
+                        
+                        const itemCells = item.querySelectorAll('.brand-cell');
+                        itemCells.forEach(c => c.classList.remove('active'));
+                        const content = item.querySelector('.pick-tab-content-item');
+                        if (content) {
+                            content.style.display = 'none';
+                        }
+                        
+                        item.style.display = idx > 2 ? 'none' : 'block';
+                    }
+                });
+                
+                const cellsInTab = mobileTab.querySelectorAll('.brand-cell');
+                cellsInTab.forEach(c => c.classList.remove('active'));
+                cell.classList.add('active');
+            }
+            
+            if (mobileIndex < mobileTabItems.length - 1) {
+                const nextTab = mobileTabItems[mobileIndex + 1];
+                const nextHeader = nextTab.querySelector('.pick-tabs-top__item');
+                
+                lastActiveTabIndex = Math.max(lastActiveTabIndex, mobileIndex + 1);
+                
+                mobileTab.classList.remove('active');
+                const currentContent = mobileTab.querySelector('.pick-tab-content-item');
+                if (currentContent) {
+                    currentContent.style.display = 'none';
+                }
+                
+                nextTab.style.display = 'block';
+                nextTab.classList.add('active');
+                
+                if (nextHeader) {
+                    nextHeader.style.opacity = '1';
+                    nextHeader.classList.add('tab-can-hover');
+                    if (!isCurrentlyActive) {
+                        const nextText = nextHeader.querySelector('.pick-top__text');
+                        if (nextText && nextHeader.dataset.originalText) {
+                            nextText.textContent = nextHeader.dataset.originalText;
                         }
                     }
                 }
-            });
-        });
-        
-        // Add CSS to style tabs properly
-        const style = document.createElement('style');
-        style.textContent = `
-            /* Default cursor for all tabs */
-            .pick-tabs-top__item {
-                cursor: pointer;
+                
+                const nextContent = nextTab.querySelector('.pick-tab-content-item');
+                if (nextContent) {
+                    nextContent.style.display = 'grid';
+                    if (!isCurrentlyActive) {
+                        const nextCells = nextContent.querySelectorAll('.brand-cell');
+                        nextCells.forEach(c => c.classList.remove('active'));
+                    }
+                }
             }
-            
-            /* Disable interactions for inactive tabs */
-            .pick-tabs-top__item[style*="opacity: 0.5"] {
-                pointer-events: none;
-                cursor: default;
-            }
-            
-            /* Remove hover effects from non-hoverable tabs */
-            .pick-tabs-top__item:not(.tab-can-hover):hover {
-                color: var(--color-gray);
-                background: transparent;
-            }
-            .pick-tabs-top__item:not(.tab-can-hover):hover .pick-top__angle {
-                background: #f4f5f7;
-            }
-            .pick-tabs-top__item:not(.tab-can-hover):hover .pick-top__angle svg path {
-                fill: var(--color-gray);
-            }
-            
-            /* Force blue background on active tabs */
-            .pick-tabs-top__item.active {
-                color: var(--color-white);
-                background: var(--color-blue);
-            }
-            .pick-tabs-top__item.active .pick-top__angle {
-                background: var(--color-blue-light);
-            }
-            .pick-tabs-top__item.active .pick-top__angle svg path {
-                fill: var(--color-white);
-            }
-            
-            /* Blue background for tab with red angle */
-            .pick-tabs-top__item .pick-top__angle[style*="var(--color-red)"] {
-                background: var(--color-red) !important;
-            }
-            .pick-tabs-top__item.last-selected {
-                color: var(--color-white);
-                background: var(--color-blue);
-            }
-            .pick-tabs-top__item.last-selected .pick-top__angle svg path {
-                fill: var(--color-white);
-            }
-        `;
-        document.head.appendChild(style);
-    }
-    
-    // Function to activate a specific tab
-    function activateTab(index) {
-        // First deactivate all tabs and content
-        tabItems.forEach(item => {
-            item.classList.remove('active');
-            item.classList.remove('last-selected');
-        });
-        tabContentItems.forEach(content => content.style.display = 'none');
-        
-        // Activate selected tab and content
-        tabItems[index].classList.add('active');
-        if (tabContentItems[index] && !isContentCollapsed) {
-            tabContentItems[index].style.display = 'grid';
         }
         
-        // Update tab visuals
-        updateTabsVisuals();
-    }
-    
-    // Function to activate a specific mobile tab
-    function activateMobileTab(index) {
-        if (mobileTabItems.length > 0) {
-            // First deactivate all mobile tabs
-            mobileTabItems.forEach(item => {
+        function activateTab(index) {
+            // Deactivate all tabs and content
+            tabItems.forEach((item, i) => {
                 item.classList.remove('active');
+                item.classList.remove('last-selected');
+                if (i <= lastActiveTabIndex) {
+                    item.classList.add('tab-can-hover');
+                } else {
+                    item.classList.remove('tab-can-hover');
+                }
             });
             
-            // Activate selected mobile tab
-            mobileTabItems[index].classList.add('active');
+            tabContentItems.forEach(content => content.style.display = 'none');
             
-            // Update opacity of mobile tabs
-            updateMobileTabsOpacity();
+            // Activate selected tab and content
+            if (tabItems[index]) {
+                tabItems[index].classList.add('active');
+            }
+            if (tabContentItems[index] && !isContentCollapsed) {
+                tabContentItems[index].style.display = 'grid';
+            }
+            
+            updateTabsVisuals();
         }
-    }
-    
-    // Function to update visuals of tabs
-    function updateTabsVisuals() {
-        // Reset all tabs styling first (except active class)
-        tabItems.forEach((item, i) => {
-            // Reset angle background
-            const angle = item.querySelector('.pick-top__angle');
-            if (angle && i !== currentActiveTabIndex) {
-                angle.style.background = '';
-            }
-            
-            // Reset last-selected class
-            item.classList.remove('last-selected');
-            
-            // Set all tabs to normal style
-            item.style.opacity = '1';
-            item.classList.add('tab-can-hover');
-        });
         
-        // Apply styles based on tab status
-        tabItems.forEach((item, i) => {
-            // Tabs after last active should have opacity 0.5
-            if (i > lastActiveTabIndex) {
-                item.style.opacity = '0.5';
-                item.classList.remove('tab-can-hover');
+        function updateTabsVisuals() {
+            tabItems.forEach(tab => tab.classList.remove('last-selected'));
+            
+            if (currentActiveTabIndex < lastActiveTabIndex) {
+                const previousActiveTab = tabItems[lastActiveTabIndex];
+                if (previousActiveTab) {
+                    previousActiveTab.classList.add('last-selected');
+                    const angle = previousActiveTab.querySelector('.pick-top__angle');
+                    if (angle) {
+                        angle.style.background = 'var(--color-red)';
+                    }
+                }
             }
             
-            // If this is the last active tab (but not the current active one),
-            // set its angle to red and apply blue background
-            if (i === lastActiveTabIndex && i !== currentActiveTabIndex) {
+            tabItems.forEach((item, i) => {
                 const angle = item.querySelector('.pick-top__angle');
-                if (angle) {
-                    angle.style.background = 'var(--color-red)';
+                if (angle && i !== currentActiveTabIndex) {
+                    if (!item.classList.contains('last-selected')) {
+                        angle.style.background = '';
+                    }
                 }
                 
-                // Add class for blue background to last selected tab
-                item.classList.add('last-selected');
-            }
-            
-            // If content is collapsed for active tab, keep the red angle
-            if (i === currentActiveTabIndex && isContentCollapsed) {
-                const angle = item.querySelector('.pick-top__angle');
-                if (angle) {
-                    angle.style.background = 'var(--color-red)';
-                }
-            }
-            
-            // Make sure active tab has blue background via CSS class
-            if (i === currentActiveTabIndex) {
-                item.classList.add('active');
-            } else {
-                item.classList.remove('active');
-            }
-        });
-    }
-    
-    // Function to update opacity of mobile tabs based on active tab
-    function updateMobileTabsOpacity() {
-        if (mobileTabItems.length > 0) {
-            const activeIndex = Array.from(mobileTabItems).findIndex(t => t.classList.contains('active'));
-            
-            mobileTabItems.forEach((item, i) => {
-                // Tabs after last active should have opacity 0.5
-                if (i > lastActiveTabIndex) {
-                    item.style.opacity = '0.5';
+                item.style.opacity = '1';
+                
+                if (i <= lastActiveTabIndex) {
+                    item.classList.add('tab-can-hover');
                 } else {
-                    item.style.opacity = '1';
+                    item.classList.remove('tab-can-hover');
+                    item.style.opacity = '0.5';
+                }
+                
+                if (i === currentActiveTabIndex && isContentCollapsed) {
+                    if (angle) {
+                        angle.style.background = 'var(--color-red)';
+                    }
                 }
             });
         }
+
+        // Handle mobile state for this container
+        function handleMobileState() {
+            if (window.innerWidth < 768 && isMobile) {
+                const firstTab = container.querySelector('.pick-tab-mobile-item:first-child');
+                if (firstTab) {
+                    const content = firstTab.querySelector('.pick-tab-content-item');
+                    const angle = firstTab.querySelector('.pick-top__angle');
+                    
+                    if (content) {
+                        content.style.display = 'none';
+                    }
+                    if (angle) {
+                        angle.style.background = 'var(--color-red)';
+                    }
+                }
+            }
+        }
+
+        // Add resize listener for this container
+        window.addEventListener('resize', handleMobileState);
+        
+        // Initial mobile state check
+        handleMobileState();
     }
-    
-    // Initialize tabs
-    initializeTabs();
 });
