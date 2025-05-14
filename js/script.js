@@ -7,6 +7,7 @@ $(document).ready(function () {
         if ($(window).width() < 1024) {
             $(this).toggleClass("active"); // Тогглим класс у самой .catalog-btn
             $(".mobile-menu").toggleClass("active"); // Тогглим класс у .mobile-menu
+            $("body").toggleClass("menu-open"); // Блокируем скролл у body
         }
     });
 
@@ -19,10 +20,14 @@ $(document).ready(function () {
                 const mobileMenu = document.querySelector(".mobile-menu");
                 if (mobileMenu) {
                     mobileMenu.classList.toggle("active");
+                    document.body.classList.toggle("menu-open"); // Блокируем скролл у body
                 }
             }
         });
     }
+
+	
+
     // JQEURY CODE
     if (typeof Swiper !== "undefined") {
         new Swiper(".preview-slider", {
@@ -397,10 +402,32 @@ $(document).ready(function () {
         const popups = document.querySelectorAll(".popup");
 
         // Открытие попапа
-        document.querySelectorAll("[data-popup]").forEach((btn) => {
-            btn.addEventListener("click", function (e) {
-                // Предотвратить повторное открытие изнутри попапа
-                if (this.closest(".popup")) return;
+        document.querySelectorAll("[data-popup]").forEach((btn_trigger) => {
+            btn_trigger.addEventListener("click", function (e) { // 'this' is btn_trigger (the element with data-popup)
+                e.stopPropagation(); // Stop the event from bubbling up to parent [data-popup] elements
+                
+                // If the trigger element ('this') is a popup div itself,
+                // and the actual click (e.target) originated from its own internal
+                // close button or background, then we should let the dedicated close handlers
+                // (already attached to .popup__back and .popup-close) do their work.
+                // We return here to prevent this opening logic from re-adding the 'active' class.
+                if (this.classList.contains("popup")) {
+                    const clickedElement = e.target;
+                    
+                    // Check against this popup's specific back button
+                    const ownBackButton = this.querySelector(":scope > .popup__back");
+                    if (ownBackButton && (ownBackButton === clickedElement || ownBackButton.contains(clickedElement))) {
+                        return; 
+                    }
+
+                    // Check against this popup's specific close button (and its children like SVG)
+                    // The path to popup-close might vary, but based on provided HTML for garage-inner:
+                    // <div class="popup"><div class="popup__content"><div class="popup-close">
+                    const ownCloseButton = this.querySelector(":scope > .popup__content > .popup-close");
+                    if (ownCloseButton && (ownCloseButton === clickedElement || ownCloseButton.contains(clickedElement))) {
+                        return;
+                    }
+                }
 
                 const popupName = this.getAttribute("data-popup");
                 const targetPopup = document.querySelector(
@@ -877,6 +904,8 @@ $(document).ready(function () {
             return;
         }
 
+        const DEFAULT_CATALOG_MAIN_TEXT = "Каталог запчастин i автотоварів";
+
         const catalogBox = mobileMenuBottom.querySelector(".catalog-box");
         const catalogTabsContainer =
             mobileMenuBottom.querySelector(".catalog-tabs");
@@ -928,6 +957,8 @@ $(document).ready(function () {
             )
                 return;
 
+            catalogCurrent.classList.remove("catalog-current-default"); // Remove by default
+
             // Back Button Logic
             if (currentLevel === 1) {
                 backButton.style.display = "none";
@@ -951,10 +982,11 @@ $(document).ready(function () {
             catalogAngle.style.display = "none";
 
             if (currentLevel === 1) {
-                catalogMainText.textContent = navigationPath[0]; // "Каталог"
+                catalogMainText.textContent = DEFAULT_CATALOG_MAIN_TEXT; 
+                catalogCurrent.classList.add("catalog-current-default"); 
             } else if (currentLevel === 2) {
                 // Viewing subcategories of navigationPath[1]
-                catalogMainText.textContent = navigationPath[0]; // "Каталог"
+                catalogMainText.textContent = navigationPath[0]; 
                 catalogMainText.style.cursor = "pointer";
                 catalogMainText.onclick = () => {
                     navigationPath = [navigationPath[0]];
@@ -1126,35 +1158,21 @@ $(document).ready(function () {
 
     if (catalogBtn && mobileMenu) {
         catalogBtn.addEventListener("click", function () {
-            // Check if the click is on the burger icon itself or its parent button
-            // This prevents the menu from closing if something inside .catalog-window (part of mobile menu) is clicked
-            // and that click somehow bubbles up to catalogBtn (though less likely with current structure).
-            // More importantly, this ensures we are toggling based on the main burger button interaction.
-
             const isOpening = !mobileMenu.classList.contains("active");
 
             catalogBtn.classList.toggle("active");
             mobileMenu.classList.toggle("active");
 
             if (isOpening) {
-                // Optional: Prevent body scroll when menu is open
                 document.body.style.overflow = "hidden";
                 // Reset mobile catalog navigation to level 1 when opening
                 if (
                     typeof setupMobileCatalogNavigation === "function" &&
                     window.innerWidth < 830
                 ) {
-                    // Temporarily set navigationPath to ensure level 1 is displayed
-                    // This assumes navigationPath is accessible or setupMobileCatalogNavigation handles it.
-                    // For a cleaner approach, setupMobileCatalogNavigation could have a reset function.
-                    // Directly manipulating its internal state from here is not ideal but works for a simple reset.
-                    const catalogCurrent = mobileMenu.querySelector(
-                        ".mobile-menu-bottom .catalog-current .catalog-main"
-                    );
-                    if (catalogCurrent) catalogCurrent.click(); // Simulate click on "Каталог" if available and clickable
+                    setupMobileCatalogNavigation();
                 }
             } else {
-                // Optional: Restore body scroll when menu is closed
                 document.body.style.overflow = "";
             }
         });
@@ -1506,4 +1524,82 @@ $(document).ready(function () {
             $('.profile-vin-tab').fadeIn(300);
         });
     });
+
+const $searchForm = $('form#search');
+const $searchInput = $searchForm.find('input[name="search-field"]');
+const $searchList = $searchForm.find('.search-list');
+
+if ($searchInput.length && $searchList.length) {
+    $searchList.hide();
+
+    // При фокусе на input — показываем список и добавляем класс
+    $searchInput.on('focus', function () {
+        $searchList.show();
+        $searchForm.addClass('active');
+    });
+
+    // При потере фокуса через timeout проверяем, ушёл ли фокус на список
+    $searchInput.on('blur', function () {
+        setTimeout(function () {
+            if (!$(document.activeElement).closest($searchForm).length) {
+                $searchList.hide();
+                $searchForm.removeClass('active');
+            }
+        }, 100); // даём время обработать фокус на других элементах
+    });
+}
+
+});
+
+// Mobile-down bar visibility on scroll
+document.addEventListener('DOMContentLoaded', () => {
+    const mobileDownBar = document.querySelector('.mobile-down');
+    if (!mobileDownBar) {
+        return;
+    }
+
+    // Ensure it is initially visible by removing --hidden class, 
+    // and also if already at top of page when loaded.
+    if (window.scrollY === 0) {
+        mobileDownBar.classList.remove('mobile-down--hidden');
+    } // If scrolled down a bit on load, the scroll listener will handle it.
+
+    let lastScrollY = window.scrollY;
+    const scrollThreshold = 10; // Increased threshold slightly
+    const showOffset = 50; // Only show if scrolled up past this amount from bottom, or scrolled up a bit from current pos
+
+    window.addEventListener('scroll', () => {
+        const currentScrollY = window.scrollY;
+
+        if (Math.abs(currentScrollY - lastScrollY) < scrollThreshold) {
+            return; 
+        }
+
+        const scrollingUp = currentScrollY < lastScrollY;
+        const scrollingDown = currentScrollY > lastScrollY;
+
+        if (scrollingDown) {
+            mobileDownBar.classList.add('mobile-down--hidden');
+        } else if (scrollingUp) {
+            // Only show if not at the very top of the page.
+            if (currentScrollY > 0) { 
+                mobileDownBar.classList.remove('mobile-down--hidden');
+            } else {
+                // At the very top, ensure it's hidden.
+                mobileDownBar.classList.add('mobile-down--hidden');
+            }
+        }
+        
+        lastScrollY = currentScrollY <= 0 ? 0 : currentScrollY;
+    }, { passive: true });
+
+    // Final check on load to ensure correct state based on initial scroll position
+    if (window.scrollY > 0) {
+        // If loaded page is already scrolled down, respect normal scroll logic
+        // For example, if it was scrolled down more than lastScrollY, it should be hidden.
+        // This part might need refinement based on exact desired load behavior when pre-scrolled.
+        // For now, if it's not at the top, the default visible state from CSS will apply unless scrolled down.
+    } else {
+         mobileDownBar.classList.remove('mobile-down--hidden'); // Explicitly visible if at top on load
+    }
 });
