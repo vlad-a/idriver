@@ -429,6 +429,7 @@ svg path {
     transition: 0.3s all;
     opacity: 0;
     visibility: hidden;
+	margin-top: 4px;
 }
 .call-dropdown .auth-line {
     width: 100%;
