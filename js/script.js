@@ -3,6 +3,7 @@ $(document).ready(function () {
     // Now the mobile menu will only be shown when clicked
 
     // Удаляем конфликтующий jQuery обработчик:
+    /*
     $(".catalog-btn").on("click", function () {
         if ($(window).width() < 1024) {
             $(this).toggleClass("active"); // Тогглим класс у самой .catalog-btn
@@ -10,8 +11,10 @@ $(document).ready(function () {
             $("body").toggleClass("menu-open"); // Блокируем скролл у body
         }
     });
+    */
 
     // Оставляем и модифицируем этот обработчик:
+    /*
     const catalogButton = document.querySelector(".catalog-btn");
     if (catalogButton) {
         catalogButton.addEventListener("click", function () {
@@ -25,8 +28,7 @@ $(document).ready(function () {
             }
         });
     }
-
-	
+    */
 
     // JQEURY CODE
     if (typeof Swiper !== "undefined") {
@@ -1034,6 +1036,14 @@ $(document).ready(function () {
             currentLevel = level;
             updateDisplayElements();
 
+            if (catalogBox) { // Ensure catalogBox element exists
+                if (level > 1) {
+                    catalogBox.classList.add("catalog-box--deeper");
+                } else {
+                    catalogBox.classList.remove("catalog-box--deeper");
+                }
+            }
+
             catalogTabsContainer.style.display = level === 1 ? "block" : "none";
             if (catalogContent)
                 catalogContent.style.display = level > 1 ? "block" : "none";
@@ -1153,28 +1163,41 @@ $(document).ready(function () {
     window.addEventListener("load", setupMobileCatalogNavigation);
     window.addEventListener("resize", setupMobileCatalogNavigation);
     // Mobile Menu Toggle
-    const catalogBtn = document.querySelector(".catalog-btn");
+    const allCatalogBtns = document.querySelectorAll(".catalog-btn");
     const mobileMenu = document.querySelector(".mobile-menu");
 
-    if (catalogBtn && mobileMenu) {
-        catalogBtn.addEventListener("click", function () {
-            const isOpening = !mobileMenu.classList.contains("active");
+    if (allCatalogBtns.length > 0 && mobileMenu) {
+        allCatalogBtns.forEach(btn => {
+            btn.addEventListener("click", function () {
+                // Toggle mobile menu active state first
+                mobileMenu.classList.toggle("active");
+                const isMenuNowActive = mobileMenu.classList.contains("active");
 
-            catalogBtn.classList.toggle("active");
-            mobileMenu.classList.toggle("active");
+                // Synchronize all catalog buttons' active class
+                allCatalogBtns.forEach(cb => {
+                    if (isMenuNowActive) {
+                        cb.classList.add("active");
+                    } else {
+                        cb.classList.remove("active");
+                    }
+                });
 
-            if (isOpening) {
-                document.body.style.overflow = "hidden";
-                // Reset mobile catalog navigation to level 1 when opening
-                if (
-                    typeof setupMobileCatalogNavigation === "function" &&
-                    window.innerWidth < 830
-                ) {
-                    setupMobileCatalogNavigation();
+                // Handle body overflow and 'menu-open' class
+                if (isMenuNowActive) {
+                    document.body.style.overflow = "hidden";
+                    document.body.classList.add("menu-open");
+                    // Reset mobile catalog navigation to level 1 when opening
+                    if (
+                        typeof setupMobileCatalogNavigation === "function" &&
+                        window.innerWidth < 830
+                    ) {
+                        setupMobileCatalogNavigation();
+                    }
+                } else {
+                    document.body.style.overflow = "";
+                    document.body.classList.remove("menu-open");
                 }
-            } else {
-                document.body.style.overflow = "";
-            }
+            });
         });
     }
 
@@ -1525,29 +1548,44 @@ $(document).ready(function () {
         });
     });
 
-const $searchForm = $('form#search');
-const $searchInput = $searchForm.find('input[name="search-field"]');
-const $searchList = $searchForm.find('.search-list');
+    // Function to handle search form interactions
+    function setupSearchForm(formId) {
+        const $searchForm = $('form#' + formId);
+        const $searchInput = $searchForm.find('input[name="search-field"]');
+        const $searchList = $searchForm.find('.search-list');
 
-if ($searchInput.length && $searchList.length) {
-    $searchList.hide();
+        if ($searchInput.length && $searchList.length) {
+            $searchList.hide();
 
-    // При фокусе на input — показываем список и добавляем класс
-    $searchInput.on('focus', function () {
-        $searchList.show();
-        $searchForm.addClass('active');
-    });
+            // При фокусе на input — показываем список и добавляем класс
+            $searchInput.on('focus', function () {
+                $searchList.show();
+                $searchForm.addClass('active');
+            });
 
-    // При потере фокуса через timeout проверяем, ушёл ли фокус на список
-    $searchInput.on('blur', function () {
-        setTimeout(function () {
-            if (!$(document.activeElement).closest($searchForm).length) {
-                $searchList.hide();
-                $searchForm.removeClass('active');
-            }
-        }, 100); // даём время обработать фокус на других элементах
-    });
-}
+            // При потере фокуса через timeout проверяем, ушёл ли фокус на список
+            $searchInput.on('blur', function () {
+                setTimeout(function () {
+                    // Проверяем, не перешел ли фокус на один из элементов внутри $searchForm
+                    if (!$(document.activeElement).closest($searchForm).length) {
+                        $searchList.hide();
+                        $searchForm.removeClass('active');
+                    }
+                }, 100); // даём время обработать фокус на других элементах
+            });
+
+            // Дополнительно, если кликнули на элемент списка, не скрывать список
+            $searchList.on('mousedown', function(event) {
+                // Этот обработчик предотвращает 'blur' на $searchInput, если клик был внутри $searchList
+                // Это помогает сохранить список открытым, если пользователь кликает по его элементам.
+                // event.preventDefault(); // Раскомментируйте, если нужно предотвратить стандартное поведение mousedown
+            });
+        }
+    }
+
+    // Initialize for both search forms
+    setupSearchForm('search');
+    setupSearchForm('search-other');
 
 });
 
