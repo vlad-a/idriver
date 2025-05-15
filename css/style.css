@@ -5634,7 +5634,10 @@ p.profile-order-dropdown__text-small {
 	display: block;
 }.catalog-box--deeper nav {
 	display: none;
-}
+}	.header-mobile .basket__icon .notifications-count {
+		left: unset;
+		right: -8px;
+	}
 }
 @media screen and (max-width: 830px) {
     .catalog-current {
@@ -5807,6 +5810,7 @@ p.profile-order-dropdown__text-small {
 	.catalog-content-item__inner .catalog-content-item__column:last-child .catalog-content-item__title {
 		border-bottom: 0;
 	}	
+
 	
 }
 @media screen and (max-width: 768px) {
