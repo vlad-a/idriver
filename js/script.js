@@ -1451,14 +1451,6 @@ $(document).ready(function () {
     });
     
     $('body').append(scrollButton);
-    
-    // Add CSS file
-    $('<link>')
-        .attr({
-            rel: 'stylesheet',
-            href: 'css/scroll-to-top.css'
-        })
-        .appendTo('head');
 
     // Show/hide button based on scroll position
     $(window).scroll(function() {
