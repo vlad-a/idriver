@@ -4002,6 +4002,12 @@ a.order-header-info-call__phone:hover {
     cursor: pointer;
     transition: 0.3s all;
 }
+.mobile-down-item__icon {
+	position: relative;
+}
+.vin-inner-text {
+	line-height: 1;
+}
 .profile-order-details-dropdown__show:hover {
     color: var(--color-blue);
 }
@@ -6513,10 +6519,20 @@ display: flex
 	}
 	.popup-recall .popup-close {
         position: fixed;
-        right: 16px;
+        right: 26px;
 	}
 	.popup-recall .popup__content {
 		max-width: 310px;
+	}
+	.popup-pass-change {
+		    background: rgba(0, 0, 0, 0.5);
+	}
+	.popup-pass-change .popup__content {
+		width: 90%;
+	}
+	.popup-pass-change  .popup-close {
+		position: absolute;
+		right: 16px;
 	}
 }
 

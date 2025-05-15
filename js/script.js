@@ -1169,46 +1169,33 @@ $(document).ready(function () {
     if (allCatalogBtns.length > 0 && mobileMenu) {
         allCatalogBtns.forEach(btn => {
             btn.addEventListener("click", function () {
-                // Only proceed if the screen width is less than 1024px
-                if (window.innerWidth < 1024) {
-                    // Toggle mobile menu active state first
-                    mobileMenu.classList.toggle("active");
-                    const isMenuNowActive = mobileMenu.classList.contains("active");
+                // Toggle mobile menu active state first
+                mobileMenu.classList.toggle("active");
+                const isMenuNowActive = mobileMenu.classList.contains("active");
 
-                    // Synchronize all catalog buttons' active class
-                    allCatalogBtns.forEach(cb => {
-                        if (isMenuNowActive) {
-                            cb.classList.add("active");
-                        } else {
-                            cb.classList.remove("active");
-                        }
-                    });
-
-                    // Handle body overflow and 'menu-open' class
+                // Synchronize all catalog buttons' active class
+                allCatalogBtns.forEach(cb => {
                     if (isMenuNowActive) {
-                        document.body.style.overflow = "hidden";
-                        document.body.classList.add("menu-open");
-                        // Reset mobile catalog navigation to level 1 when opening
-                        if (
-                            typeof setupMobileCatalogNavigation === "function" &&
-                            window.innerWidth < 830 // This specific condition for navigation setup can remain
-                        ) {
-                            setupMobileCatalogNavigation();
-                        }
+                        cb.classList.add("active");
                     } else {
-                        document.body.style.overflow = "";
-                        document.body.classList.remove("menu-open");
+                        cb.classList.remove("active");
+                    }
+                });
+
+                // Handle body overflow and 'menu-open' class
+                if (isMenuNowActive) {
+                    document.body.style.overflow = "hidden";
+                    document.body.classList.add("menu-open");
+                    // Reset mobile catalog navigation to level 1 when opening
+                    if (
+                        typeof setupMobileCatalogNavigation === "function" &&
+                        window.innerWidth < 830
+                    ) {
+                        setupMobileCatalogNavigation();
                     }
                 } else {
-                    // Optional: On wider screens, ensure menu is not active and body scroll is normal
-                    // This might be redundant if the button is not intended to be functional on desktop
-                    // or if CSS handles the menu visibility appropriately based on screen size.
-                    // For now, the main goal is to prevent body scroll lock on desktop.
-                    // If .catalog-btn might be active from a previous mobile interaction, ensure it's reset.
-                    // mobileMenu.classList.remove("active");
-                    // allCatalogBtns.forEach(cb => cb.classList.remove("active"));
-                    // document.body.style.overflow = "";
-                    // document.body.classList.remove("menu-open");
+                    document.body.style.overflow = "";
+                    document.body.classList.remove("menu-open");
                 }
             });
         });
