@@ -4551,8 +4551,8 @@ p.profile-order-dropdown__text-small {
 .catalog-item-show--all:hover .catalog-item-show-all__angle {
 	background: var(--color-blue);
 }
-.catalog-item-show--all:hover .catalog-item-show-all__angle svg path{
-	fill: var(--color-white);
+.catalog-item-show--all:hover .catalog-item-show-all__angle svg path {
+	fill: #fff;
 }
 .catalog-item-show--all:hover .catalog-item-show-all__text {
 	color: var(--color-blue);
