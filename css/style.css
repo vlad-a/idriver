@@ -3599,7 +3599,86 @@ p a {
     transition: opacity 0.3s ease-in-out;
     /* Keep display:flex as it seems to be used for layout */
 }
-
+.check {
+	max-width: 1000px;
+	width: 100%;
+	margin: 0 auto;
+}            .check-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+            }
+            .check-table th, .check-table td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: left;
+            }
+            .check-table th {
+                background-color: #f2f2f2;
+            }
+            .check-table th:nth-child(1), 
+            .check-table th:nth-child(2),
+            .check-table th:nth-child(4),
+            .check-table th:nth-child(5),
+            .check-table th:nth-child(6) {
+                width: 8%;
+            }
+            .check-table th:nth-child(3) {
+                width: 60%;
+            }
+            .check-table .spanning-cell {
+                text-align: center;
+            }
+            .check__title {
+                font-size: 24px;
+                text-align: center;
+                margin-top: 20px;
+                margin-bottom: 10px;
+            }
+			.check-item-info {
+				display: flex;
+				gap: 5px;
+			}
+			.check-item__left {
+				min-width: 150px;
+				text-align: right;
+			}
+			.check-item__left.bold {
+				font-weight: 700;
+			}
+			.check-item__right.bold {
+				font-weight: 700;
+			}
+			.check-item-info {
+				line-height: 1.5;
+			}
+			.check-item-box {
+				align-items: center;
+				display: flex;
+				justify-content: space-between;
+				gap: 50px;
+				margin-bottom: 20px;
+			}
+			.check-item-box__left {
+				max-width: 700px;
+			}
+			.check-item-box__right svg path {
+				fill: var(--color-blue);
+			}
+			.check-item-box__left {
+								display: flex;
+				flex-direction: column;
+				gap: 20px;
+			}
+			.bold {
+				font-weight: 700;
+			}
+			.check-sum {
+				margin-top: 30px;
+			}
+			.check-sum span {
+				font-weight: 400;
+			}
 .my-garage-content-tabs .my-garage-content.active {
     display: grid; /* Show active content pane */
 	grid-template-columns: repeat(2, 1fr);
