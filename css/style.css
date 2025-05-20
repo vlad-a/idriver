@@ -4176,7 +4176,13 @@ p.profile-order-dropdown__text-small {
     opacity: 0;
     display: none !important; /* Ensure it is hidden */
 }
-
+.pick-tabs-top.new-grid {
+	display: grid;
+	grid-template-columns: repeat(6, 1fr);
+}
+.pick-tabs-top.new-grid .pick-tabs-top__item {
+	padding: 25px 45px;
+}
 /* Profile Order Details Dropdown */
 .profile-order-details-dropdown-content {
     max-height: 0;
@@ -4472,8 +4478,6 @@ p.profile-order-dropdown__text-small {
 	align-items: center;
 }
 .catalog-list {
-	display: grid;
-	grid-template-columns: repeat(3, 1fr);
 	gap: 50px;
 	row-gap: 32px;
 }
@@ -4540,8 +4544,7 @@ p.profile-order-dropdown__text-small {
 .catalog-item-show-all__angle {
 	    width: 32px;
     height: 32px;
-    display: flex
-;
+    display: flex;
     justify-content: center;
     background: #F4F5F7;
     align-items: center;
