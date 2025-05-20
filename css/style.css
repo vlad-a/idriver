@@ -4730,11 +4730,6 @@ p.profile-order-dropdown__text-small {
 	.order-right {
 		width: 100%;
 	}
-	.catalog-list {
-    display: grid
-;
-    grid-template-columns: repeat(2, 1fr);
-	}
 }
 @media screen and (max-width: 1200px) {
     .container {
@@ -5831,8 +5826,6 @@ p.profile-order-dropdown__text-small {
 }	.header-mobile .basket__icon .notifications-count {
 		left: unset;
 		right: -8px;
-	}	.catalog-list {
-    grid-template-columns: repeat(1, 1fr);
 	}
 }
 @media screen and (max-width: 830px) {
