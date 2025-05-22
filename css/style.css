@@ -1421,18 +1421,29 @@ background: rgba(255, 255, 255, 0.5);
     font-weight: 500;
     align-items: center;
     font-size: 13px;
+	color: var(--color-black);
     transition: 0.3s all;
     line-height: 13px;
     cursor: pointer;
 }
-.catalog-alphabet-list__item.active {
+.catalog-alphabet-list__item:hover {
     color: var(--color-white);
     border: 1px solid #1971c8;
-    cursor: default;
-    background: var(--color-blue);
+	cursor: pointer;
+    background: var(--color-blue);box-shadow: 0 0px 6px 2px var(--color-gray-light);
 }
-.catalog-alphabet-list__item:hover {
-    box-shadow: 0 0px 6px 2px var(--color-gray-light);
+.catalog-anchor {
+	    position: absolute;
+    top: -70px;
+    left: 0;
+}
+.catalog-list {
+	display: flex;
+	flex-direction: column;
+	gap: 30px;
+}
+.catalog-list-item__inner {
+	position: relative;
 }
 .catalog-list__title {
     font-weight: 500;
@@ -4573,6 +4584,74 @@ p.profile-order-dropdown__text-small {
 	font-size: 15px;
 	line-height: 20px;
 }
+.n-found__wrapper {
+	align-items: center;
+	justify-content: center;
+	gap: 135px;
+}
+.n-found p {
+	font-size: 14px;
+	color: var(--color-black);
+	margin-bottom: 20px;
+}
+.n-found-redirect__link {
+	display: flex;
+	align-items: center;
+	gap: 15px;
+}
+.n-found-redirect {
+	display: flex;
+	align-items: center;
+	gap: 27px;
+	margin-bottom: 30px;
+}
+.n-found-redirect-text {
+	color: var(--color-blue);
+}
+.n-found-tel__list {
+	display: flex;
+	flex-direction: column;
+	gap: 15px;
+}
+.n-found-tel {
+	display: flex;
+	margin-top: 27px;
+	gap: 25px;
+}
+.n-found-tel-right input {
+	width: 200px;
+	
+	height: 40px;
+}
+.n-found-tel-right button {
+	height: 40px;
+	border: unset;
+	margin-left: 21px;
+}
+.n-found-tel__list a {
+	font-size: 18px;
+	color: var(--color-black);
+}
+.n-found-tel__list a:hover {
+	text-decoration: underline;
+}
+.n-found-redirect-icon {
+	position: relative;
+	transition: .3s all;
+	left: 0;
+}
+.n-found-right {
+	max-width: 520px;
+}
+.n-found-title {
+	margin-bottom: 30px;
+}
+.n-found-redirect__link:hover .n-found-redirect-text{
+text-decoration: underline;
+}
+.n-found-redirect__link:hover .n-found-redirect-icon{
+	left: 4px;
+}
 /* FAULT END */
 @media screen and (max-width: 1600px) {
     .container {
@@ -4730,6 +4809,12 @@ p.profile-order-dropdown__text-small {
 	.order-right {
 		width: 100%;
 	}
+	.n-found-img img {
+		width: 400px;
+	}
+	.n-found__wrapper {
+		gap: 110px;
+	}
 }
 @media screen and (max-width: 1200px) {
     .container {
@@ -4813,6 +4898,15 @@ p.profile-order-dropdown__text-small {
         flex-wrap: nowrap;
         display: flex;
     }
+	.n-found-img img {
+		width: 350px;
+	}
+	.n-found-title {
+    margin-bottom: 20px;
+}
+.n-found-redirect {
+	flex-direction: column;
+}
 }
 @media screen and (max-width: 1024px) {
     .pick-tab-mobile-item {
@@ -5826,6 +5920,13 @@ p.profile-order-dropdown__text-small {
 }	.header-mobile .basket__icon .notifications-count {
 		left: unset;
 		right: -8px;
+	}    .n-found-redirect {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+	.n-found__wrapper {
+		gap: 70px;
 	}
 }
 @media screen and (max-width: 830px) {
@@ -5999,7 +6100,16 @@ p.profile-order-dropdown__text-small {
 	.catalog-content-item__inner .catalog-content-item__column:last-child .catalog-content-item__title {
 		border-bottom: 0;
 	}	
-
+.n-found__wrapper {
+	flex-direction: column;
+}
+.n-found-img img {
+	max-width: 408px;
+	width: 100%;
+}
+.n-found-title {
+	margin-bottom: 30px;
+}
 
 }
 @media screen and (max-width: 768px) {
@@ -6040,6 +6150,10 @@ p.profile-order-dropdown__text-small {
     .preview-slider {
         height: 210px;
     }
+	.n-found-tel-right {
+		flex-direction: row;
+		display: flex;
+	}
     .swiper-button-prev,
     .swiper-button-next {
         width: 16px;
@@ -6293,6 +6407,9 @@ p.profile-order-dropdown__text-small {
 	overflow: auto;
 	flex-wrap: nowrap;
 	text-wrap: nowrap;
+}
+.catalog-anchor {
+	top: -50px;
 }
 }
 @media screen and (max-width: 576px) {
@@ -6737,6 +6854,13 @@ display: flex
     }
 	.catalog-item-info--title .catalog-item-top__title {
 		font-size: 22px;
+	}
+	.n-found-tel-right {
+		flex-direction: column;
+		gap: 20px;
+	}
+	.n-found-tel-right button {
+		margin-left: 0;
 	}
 }
 
