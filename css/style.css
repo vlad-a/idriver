@@ -175,6 +175,7 @@ body {
     font-weight: 400;
     background: var(--color-white);
 	position: relative;
+	scroll-behavior: smooth;
     color: var(--color-black);
 }
 *,
@@ -1409,6 +1410,7 @@ background: rgba(255, 255, 255, 0.5);
     padding-left: 3px;
     display: flex;
     gap: 6px;
+	flex-wrap: wrap;
     align-items: center;
 }
 .catalog-alphabet-list__item {
@@ -3728,7 +3730,17 @@ p a {
     font-weight: 500;
     margin-bottom: 10px;
 }
-
+.n-found-tel--center {
+	align-items: center;
+}
+.brand-form-delivery-item {
+	font-size: 13px;
+    line-height: 18px;
+    padding: 10px 15px;
+}
+.brands .order-form-delivery-list__dropdown {
+padding: 0;
+}
 .fault-right {
     padding: 24px 16px;
     box-shadow: 0px 4px 10px 0 var(--color-gray-light);
@@ -3922,9 +3934,18 @@ transition: .3s all;
 .order-form-delivery-list-item {
 	display: flex;
 	align-items: center;
-	padding: 8px 0;
+	padding: 15px 18px;
+	transition: .3s all;
 	gap: 10px;
 	cursor: pointer;
+}
+.order-form-delivery-list-item:hover {
+	    background: var(--color-white-blue);
+}
+.brands .order-form-delivery {
+	max-width: 770px;
+	margin: 0 auto;
+	margin-bottom: 35px;
 }
 .order-form-delivery-list-item__text {
 	font-size: 13px;
@@ -4651,6 +4672,19 @@ text-decoration: underline;
 }
 .n-found-redirect__link:hover .n-found-redirect-icon{
 	left: 4px;
+}
+.brands .catalog-list-item {
+    border: unset;
+    border-radius: unset;
+    padding: 0;
+    color: #162241;
+}
+.brands .catalog-list-item:hover {
+	text-decoration: underline;
+	box-shadow: unset;
+}
+.brands .catalog-list__box {
+	row-gap: 22px;
 }
 /* FAULT END */
 @media screen and (max-width: 1600px) {
