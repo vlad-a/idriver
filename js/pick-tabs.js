@@ -52,6 +52,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
             
+            // Проверяем количество видимых вкладок для установки класса new-grid
+            const pickTabsTop = container.querySelector('.pick-tabs-top');
+            if (pickTabsTop) {
+                const visibleTabs = Array.from(tabItems).filter(tab => tab.style.display !== 'none');
+                if (visibleTabs.length > 3) {
+                    pickTabsTop.classList.add('new-grid');
+                } else {
+                    pickTabsTop.classList.remove('new-grid');
+                }
+            }
+            
             // Initially show first tab content
             activateTab(0);
             
@@ -141,6 +152,17 @@ document.addEventListener('DOMContentLoaded', function() {
                             header.classList.remove('tab-can-hover');
                         }
                         
+                        // Проверяем количество видимых вкладок для установки класса new-grid
+                        const pickTabsTop = tab.closest('.pick-tabs--mobile');
+                        if (pickTabsTop) {
+                            const visibleTabs = Array.from(mobileTabItems).filter(item => item.style.display !== 'none');
+                            if (visibleTabs.length > 3) {
+                                pickTabsTop.classList.add('new-grid');
+                            } else {
+                                pickTabsTop.classList.remove('new-grid');
+                            }
+                        }
+                        
                         header.addEventListener('click', function() {
                             if (index <= lastActiveTabIndex) {
                                 const wasActive = tab.classList.contains('active');
@@ -211,6 +233,17 @@ document.addEventListener('DOMContentLoaded', function() {
                                                 nextHeader.style.opacity = '1';
                                                 nextHeader.classList.add('tab-can-hover');
                                             }
+                                            
+                                            // Обновляем класс new-grid при изменении видимости вкладок
+                                            const pickTabsTop = tab.closest('.pick-tabs--mobile');
+                                            if (pickTabsTop) {
+                                                const visibleTabs = Array.from(mobileTabItems).filter(item => item.style.display !== 'none');
+                                                if (visibleTabs.length > 3) {
+                                                    pickTabsTop.classList.add('new-grid');
+                                                } else {
+                                                    pickTabsTop.classList.remove('new-grid');
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -254,6 +287,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     });
                     lastActiveTabIndex = 0;
+                    
+                    // Обновляем класс new-grid для .pick-tabs-top
+                    const pickTabsTop = container.querySelector('.pick-tabs-top');
+                    if (pickTabsTop) {
+                        const visibleTabs = Array.from(tabItems).filter(tab => tab.style.display !== 'none');
+                        if (visibleTabs.length > 3) {
+                            pickTabsTop.classList.add('new-grid');
+                        } else {
+                            pickTabsTop.classList.remove('new-grid');
+                        }
+                    }
                 }
                 
                 // Сбрасываем значения всех последующих табов к их оригинальным значениям
@@ -293,6 +337,17 @@ document.addEventListener('DOMContentLoaded', function() {
                         } else {
                             nextTab.style.display = 'flex';
                             nextTab.classList.add('tab-can-hover');
+                        }
+                        
+                        // Обновляем класс new-grid для .pick-tabs-top после изменения видимости
+                        const pickTabsTop = container.querySelector('.pick-tabs-top');
+                        if (pickTabsTop) {
+                            const visibleTabs = Array.from(tabItems).filter(tab => tab.style.display !== 'none');
+                            if (visibleTabs.length > 3) {
+                                pickTabsTop.classList.add('new-grid');
+                            } else {
+                                pickTabsTop.classList.remove('new-grid');
+                            }
                         }
                     }
                     
@@ -355,6 +410,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
                 
+                // Обновляем класс new-grid после изменения видимости
+                const pickTabsTop = mobileTab.closest('.pick-tabs--mobile');
+                if (pickTabsTop) {
+                    const visibleTabs = Array.from(mobileTabItems).filter(item => item.style.display !== 'none');
+                    if (visibleTabs.length > 3) {
+                        pickTabsTop.classList.add('new-grid');
+                    } else {
+                        pickTabsTop.classList.remove('new-grid');
+                    }
+                }
+                
                 const cellsInTab = mobileTab.querySelectorAll('.brand-cell');
                 cellsInTab.forEach(c => c.classList.remove('active'));
                 cell.classList.add('active');
@@ -374,6 +440,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 nextTab.style.display = 'block';
                 nextTab.classList.add('active');
+                
+                // Обновляем класс new-grid после изменения видимости
+                const pickTabsTop = mobileTab.closest('.pick-tabs--mobile');
+                if (pickTabsTop) {
+                    const visibleTabs = Array.from(mobileTabItems).filter(item => item.style.display !== 'none');
+                    if (visibleTabs.length > 3) {
+                        pickTabsTop.classList.add('new-grid');
+                    } else {
+                        pickTabsTop.classList.remove('new-grid');
+                    }
+                }
                 
                 if (nextHeader) {
                     nextHeader.style.opacity = '1';
@@ -459,6 +536,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
             });
+
+            // Проверяем количество элементов для добавления/удаления класса new-grid
+            const pickTabsTop = container.querySelector('.pick-tabs-top');
+            if (pickTabsTop) {
+                const visibleTabs = Array.from(tabItems).filter(tab => tab.style.display !== 'none');
+                if (visibleTabs.length > 3) {
+                    pickTabsTop.classList.add('new-grid');
+                } else {
+                    pickTabsTop.classList.remove('new-grid');
+                }
+            }
         }
 
         // Handle mobile state for this container

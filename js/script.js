@@ -1,35 +1,4 @@
 $(document).ready(function () {
-    // Removing automatic mobile menu activation
-    // Now the mobile menu will only be shown when clicked
-
-    // Удаляем конфликтующий jQuery обработчик:
-    /*
-    $(".catalog-btn").on("click", function () {
-        if ($(window).width() < 1024) {
-            $(this).toggleClass("active"); // Тогглим класс у самой .catalog-btn
-            $(".mobile-menu").toggleClass("active"); // Тогглим класс у .mobile-menu
-            $("body").toggleClass("menu-open"); // Блокируем скролл у body
-        }
-    });
-    */
-
-    // Оставляем и модифицируем этот обработчик:
-    /*
-    const catalogButton = document.querySelector(".catalog-btn");
-    if (catalogButton) {
-        catalogButton.addEventListener("click", function () {
-            if (window.innerWidth < 1024) {
-                this.classList.toggle("active"); // toggle самому .catalog-btn
-                const mobileMenu = document.querySelector(".mobile-menu");
-                if (mobileMenu) {
-                    mobileMenu.classList.toggle("active");
-                    document.body.classList.toggle("menu-open"); // Блокируем скролл у body
-                }
-            }
-        });
-    }
-    */
-
     // JQEURY CODE
     if (typeof Swiper !== "undefined") {
         new Swiper(".preview-slider", {
@@ -104,41 +73,6 @@ $(document).ready(function () {
             });
         });
     });
-
-    // TABS FOR ALPHABET
-    const tabsAlphabet = document.querySelectorAll(
-        ".catalog-alphabet-list__item"
-    );
-    const tabItemsAlphabet = document.querySelectorAll(".catalog-list-tab");
-
-    tabsAlphabet.forEach((tab, index) => {
-        tab.addEventListener("click", function () {
-            // Удаляем активный класс у всех табов
-            tabsAlphabet.forEach((t) => t.classList.remove("active"));
-            tab.classList.add("active");
-
-            // Скрываем все таб-контенты
-            tabItemsAlphabet.forEach((item) => {
-                item.style.display = "none";
-                item.style.opacity = 0;
-            });
-
-            // Показываем нужный с fadeIn
-            const target = tabItemsAlphabet[index];
-            target.style.display = "grid";
-            setTimeout(() => {
-                target.style.opacity = 1;
-                target.style.transition = "opacity 0.3s ease";
-            }, 10);
-        });
-    });
-
-    // Активируем первый таб
-    if (tabsAlphabet[0]) {
-        tabsAlphabet[0].classList.add("active");
-        tabItemsAlphabet[0].style.display = "grid";
-        tabItemsAlphabet[0].style.opacity = 1;
-    }
 
     // READ MORE BTN
     const moreButtons = document.querySelectorAll(".catalog-info-more");
