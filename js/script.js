@@ -1,58 +1,6 @@
 $(document).ready(function () {
-    // JQEURY CODE
-    if (typeof Swiper !== "undefined") {
-        new Swiper(".preview-slider", {
-            slidesPerView: 1, // Один слайд на экране
-            slidesPerGroup: 1, // Прокручивается по одному
-            loop: true, // Зацикленность
-            spaceBetween: 0, // Без отступа
 
-            pagination: {
-                el: ".swiper-pagination",
-                clickable: true,
-            },
 
-            navigation: {
-                nextEl: ".swiper-button-next",
-                prevEl: ".swiper-button-prev",
-            },
-        });
-    } else {
-        console.log(
-            "Swiper library is not loaded. Swiper initialization skipped."
-        );
-    }
-
-    // AUTHENTICATION TABS
-
-    const authTabs = document.querySelectorAll(".popup-auth-choise__item");
-    const authForms = document.querySelectorAll(
-        ".popup-auth-tabs__content form"
-    );
-
-    // Устанавливаем начальное состояние - первая форма активна
-    if (authForms.length > 0 && authTabs.length > 0) {
-        // Активируем первый таб и форму
-        authTabs[0].classList.add("active");
-        authForms[0].classList.add("active");
-
-        // Добавляем обработчик клика для всех табов
-        authTabs.forEach((tab, index) => {
-            tab.addEventListener("click", () => {
-                // Снимаем активность у всех табов и форм
-                authTabs.forEach((t) => t.classList.remove("active"));
-                authForms.forEach((form) => form.classList.remove("active"));
-
-                // Активируем текущий таб
-                tab.classList.add("active");
-
-                // Активируем соответствующую форму
-                if (index < authForms.length) {
-                    authForms[index].classList.add("active");
-                }
-            });
-        });
-    }
 
     // VANILLA JS CODE
 
@@ -253,27 +201,30 @@ $(document).ready(function () {
         const images = document.querySelectorAll("img");
 
         // Обрабатываем каждое изображение
-        images.forEach((img) => {
-            // Сохраняем оригинальный src
-            const originalSrc = img.src;
+		images.forEach((img) => {
+			// Сохраняем оригинальный src
+			const originalSrc = img.src;
 
-            // Пропускаем SVG и изображения в критических местах (header, logo)
-            if (
-                originalSrc &&
-                originalSrc.indexOf(".svg") === -1 &&
-                !img.closest("header") &&
-                !img.closest(".logo")
-            ) {
-                // Добавляем класс для стилей
-                img.classList.add("lazy");
+			// Пропускаем SVG, изображения в критических местах (header, logo) И изображения внутри слайдеров
+			if (
+				originalSrc &&
+				originalSrc.indexOf(".svg") === -1 &&
+				!img.closest("header") &&
+				!img.closest(".logo") &&
+				!img.closest(".slider") &&       // Добавляем класс/селектор вашего слайдера
+				!img.closest(".swiper") &&       // Для Swiper.js слайдеров
+				!img.closest(".slick-slide")      // Для Slick слайдеров
+			) {
+				// Добавляем класс для стилей
+				img.classList.add("lazy");
 
-                // Сохраняем оригинальный src в data-src
-                img.dataset.src = originalSrc;
-                
-                // Используем прозрачный 1x1 пиксель вместо SVG для лучшей совместимости
-                img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-            }
-        });
+				// Сохраняем оригинальный src в data-src
+				img.dataset.src = originalSrc;
+				
+				// Используем прозрачный 1x1 пиксель вместо SVG для лучшей совместимости
+				img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+			}
+		});
 
         // Функция загрузки с IntersectionObserver
         const lazyLoad = () => {
